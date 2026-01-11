@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Wonderflow",
+  "version": "1.0.0",
+  "description": "Access your Wonderflow marketing audiences and messaging",
+  "permissions": [
+    "storage"
+  ],
+  "icons": {
+    "16": "wonderflow-colorfavicon.png",
+    "48": "wonderflow-colorfavicon.png",
+    "128": "wonderflow-colorfavicon.png"
+  },
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "wonderflow-colorfavicon.png",
+      "48": "wonderflow-colorfavicon.png",
+      "128": "wonderflow-colorfavicon.png"
+    }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
