@@ -4,7 +4,11 @@
   "version": "1.0.0",
   "description": "Access your Wonderflow marketing audiences and messaging",
   "permissions": [
-    "storage"
+    "storage",
+    "identity"
+  ],
+  "host_permissions": [
+    "https://kreufabhriiwgbvoovlz.supabase.co/*"
   ],
   "icons": {
     "16": "wonderflow-colorfavicon.png",
