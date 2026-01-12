@@ -178,12 +178,6 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
                 <p className="text-gray-900 mt-1">{audience.funnel_type}</p>
               </div>
             )}
-            {audience.mode && (
-              <div>
-                <span className="text-sm font-medium text-gray-600">Mode:</span>
-                <p className="text-gray-900 mt-1">{audience.mode}</p>
-              </div>
-            )}
           </div>
         </div>
 
@@ -202,17 +196,6 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
                 </span>
               ))}
             </div>
-          </div>
-        )}
-
-        {audience.estimated_reach_min !== null && audience.estimated_reach_max !== null && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
-              Estimated Reach
-            </h2>
-            <p className="text-gray-900">
-              {audience.estimated_reach_min.toLocaleString()} - {audience.estimated_reach_max.toLocaleString()}
-            </p>
           </div>
         )}
 
