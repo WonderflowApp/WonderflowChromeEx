@@ -63,7 +63,7 @@ export default function Auth() {
 
           <form onSubmit={handleSignIn} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email
               </label>
               <input
@@ -78,7 +78,7 @@ export default function Auth() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
               <input
@@ -142,7 +142,7 @@ export default function Auth() {
             {googleLoading ? 'Signing in...' : 'Continue with Google'}
           </button>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
+          <p className="text-center text-sm text-gray-600 mt-4">
             Don't have an account?{' '}
             <a
               href="https://app.wonderflow.io"
