@@ -211,9 +211,9 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
 
         {painPoints.length > 0 && (
           <div>
-            <div className="flex justify-center gap-3"
+            <div className="flex items-center gap-3">
+            <MousePointerClick className="h-4 w-4" />
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
-              <MousePointerClick className="h-4 w-4" />
               Pain Points
             </h2>
           </div>
