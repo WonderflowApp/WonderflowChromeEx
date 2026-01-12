@@ -92,10 +92,10 @@ export default function AudienceList({ audiences, onSelectAudience, onBack }: Au
                       </span>
                     )}
                   </div>
-                        <p className="text-xs text-gray-500 mt-2">
+                )}
+                  <p className="text-xs text-gray-500 mt-2">
                  Created {new Date(audience.created_at).toLocaleDateString()}
                 </p>
-                )}
               </button>
             ))
           )}
