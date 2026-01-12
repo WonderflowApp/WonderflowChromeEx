@@ -198,7 +198,7 @@ export default function Dashboard() {
                             }`}>
                               {workspace.name}
                             </span>
-                            <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-full uppercase font-semibold ml-2">
+                            <span className="text-[9px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-full uppercase font-semibold ml-2">
                               {workspace.role}
                             </span>
                           </div>
