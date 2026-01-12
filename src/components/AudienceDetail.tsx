@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ChevronDown, ChevronRight, Copy, Check, Facebook, Instagram, Linkedin, Twitter, Youtube, Search } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronRight, Copy, Check, Facebook, Instagram, Linkedin, Twitter, Youtube, Search, MousePointerClick } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
 
@@ -210,10 +210,13 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
         )}
 
         {painPoints.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+          <div>
+            <div className="flex justify-center gap-3"
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+              <MousePointerClick className="h-4 w-4" />
               Pain Points
             </h2>
+          </div>
             <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5 scrollbar-hide">
               {painPoints.map((painPoint) => (
                 <div
