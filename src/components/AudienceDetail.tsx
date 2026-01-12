@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ChevronDown, ChevronRight, Copy, Check, Facebook, Instagram, Linkedin, Twitter, Youtube, Search, Captions, MousePointerClick } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronRight, Copy, Check, Facebook, Instagram, Linkedin, Twitter, Youtube, Search, Captions, MousePointerClick, Target } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
 
@@ -334,10 +334,13 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
         )}
 
         {targetingLayers.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+          <div>
+            <div className="flex items-center gap-3">
+              <Target className="h-4 w-4 text-gray-700" />
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
               Targeting Layers
             </h2>
+            </div>
             <div className="space-y-3">
               {targetingLayers.map((layer) => {
                 const isExpanded = expandedTargeting.has(layer.id);
