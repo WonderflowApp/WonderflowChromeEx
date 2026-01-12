@@ -235,7 +235,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           <div>
             <div className="flex items-center gap-3">
             <Captions className="h-4 w-4 text-gray-700" />
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
               Content Pillars
             </h2>
             </div>
@@ -243,14 +243,14 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
               {pillars.map((pillar) => {
                 const isExpanded = expandedPillars.has(pillar.id);
                 return (
-                  <div key={pillar.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                  <div key={pillar.id} className="border border-gray-100 rounded-lg overflow-hidden">
                     <button
                       onClick={() => togglePillar(pillar.id)}
                       className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
                     >
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900">{pillar.name}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{pillar.core_promise}</p>
+                        <p className="text-xs text-gray-600 mt-1">{pillar.core_promise}</p>
                       </div>
                       {isExpanded ? (
                         <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0 ml-3" />
@@ -260,15 +260,17 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
                     </button>
 
                     {isExpanded && pillar.blocks.length > 0 && (
-                      <div className="p-4 space-y-3 bg-white">
+                      <div className="p-4 space-y-3">
                         {pillar.blocks.map((block) => (
                           <div
                             key={block.id}
-                            className="pl-4 border-l-2 border-blue-200 space-y-2"
+                            className="pl-4 border-l-2 border-primary/30 space-y-2"
                           >
                             {block.block_type && (
-                              <span className="inline-block text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
-                                {block.block_type}
+                              <span className="inline-block text-xs px-2 py-1 bg-primary/10 text-primary rounded-full font-medium">
+                                {block.block_type
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, char => char.toUpperCase())}
                               </span>
                             )}
 
