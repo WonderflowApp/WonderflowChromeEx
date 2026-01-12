@@ -340,9 +340,9 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           <div>
             <div className="flex items-center gap-3">
               <Target className="h-4 w-4 text-gray-700" />
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
               Targeting Layers
-            </h2>
+            </span>
             </div>
             <div className="space-y-3">
               {targetingLayers.map((layer) => {
