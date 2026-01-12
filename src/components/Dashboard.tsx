@@ -197,8 +197,10 @@ export default function Dashboard() {
           </div>
 
           {/* Intro Message */}
-            <div className="relative">
-
+            <div className="relative bg-primary/5 border border-primary p-2">
+             <p className="text-sm font-semibold text-primary mb-1">
+               Use Wonderflow as a reference while you work</p>
+              <p className="text-xs text-gray-800">Open this panel while writing ads, emails, or landing pages. Pull audience insights and approved messaging without switching tools.</p>           
             </div>
         </div>
 
