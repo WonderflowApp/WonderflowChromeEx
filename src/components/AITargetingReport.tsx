@@ -86,6 +86,54 @@ export default function AITargetingReport({ data }: AITargetingReportProps) {
         </div>
       )}
 
+      {data.targeting_categories && data.targeting_categories.length > 0 && (
+        <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="flex items-center gap-2 mb-2">
+            <Target className="w-4 h-4 text-gray-700" />
+            <h3 className="text-base font-semibold text-gray-900">Targeting Categories</h3>
+          </div>
+
+          <div className="space-y-3">
+            {data.targeting_categories.map((category, index) => {
+              const isExpanded = expandedCategories.has(index);
+              return (
+                <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => toggleCategory(index)}
+                    className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                  >
+                    <div className="flex items-center gap-3 flex-1">
+                      <span className="font-semibold text-gray-900">{category.category}</span>
+                      <span className={`px-2 py-1 rounded text-xs font-medium border ${getPriorityColor(category.priority)}`}>
+                        {category.priority.charAt(0).toUpperCase() + category.priority.slice(1)}
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 ml-2">
+                      {isExpanded ? '▼' : '▶'}
+                    </span>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="p-4 bg-white border-t border-gray-200">
+                      <div className="flex flex-wrap gap-2">
+                        {category.recommendations.map((rec, recIndex) => (
+                          <span
+                            key={recIndex}
+                            className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm border border-gray-200 hover:bg-gray-200 transition-colors"
+                          >
+                            {rec}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {data.audience_suggestions && (
         <div className="bg-white rounded-lg p-6 border border-gray-200">
           <div className="flex items-center gap-2 mb-2">
@@ -144,54 +192,6 @@ export default function AITargetingReport({ data }: AITargetingReportProps) {
                 </div>
               </div>
             )}
-          </div>
-        </div>
-      )}
-
-      {data.targeting_categories && data.targeting_categories.length > 0 && (
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Target className="w-4 h-4 text-gray-700" />
-            <h3 className="text-base font-semibold text-gray-900">Targeting Categories</h3>
-          </div>
-
-          <div className="space-y-3">
-            {data.targeting_categories.map((category, index) => {
-              const isExpanded = expandedCategories.has(index);
-              return (
-                <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
-                  <button
-                    onClick={() => toggleCategory(index)}
-                    className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
-                  >
-                    <div className="flex items-center gap-3 flex-1">
-                      <span className="font-semibold text-gray-900">{category.category}</span>
-                      <span className={`px-2 py-1 rounded text-xs font-medium border ${getPriorityColor(category.priority)}`}>
-                        {category.priority.charAt(0).toUpperCase() + category.priority.slice(1)}
-                      </span>
-                    </div>
-                    <span className="text-xs text-gray-500 ml-2">
-                      {isExpanded ? '▼' : '▶'}
-                    </span>
-                  </button>
-
-                  {isExpanded && (
-                    <div className="p-4 bg-white border-t border-gray-200">
-                      <div className="flex flex-wrap gap-2">
-                        {category.recommendations.map((rec, recIndex) => (
-                          <span
-                            key={recIndex}
-                            className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm border border-gray-200 hover:bg-gray-200 transition-colors"
-                          >
-                            {rec}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
           </div>
         </div>
       )}
