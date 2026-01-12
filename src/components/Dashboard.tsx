@@ -1,22 +1,30 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { LogOut, ChevronDown, House } from 'lucide-react';
+import { LogOut, ChevronDown, Home, ChevronRight } from 'lucide-react';
 import type { Database } from '../lib/database.types';
+import AudienceList from './AudienceList';
+import AudienceDetail from './AudienceDetail';
+import CopyList from './CopyList';
+import CopyDetail from './CopyDetail';
 
 type Audience = Database['public']['Tables']['audiences']['Row'];
 type CopyBlock = Database['public']['Tables']['copy_blocks']['Row'];
 type Workspace = Database['public']['Tables']['workspaces']['Row'];
-type WorkspaceMember = Database['public']['Tables']['workspace_members']['Row'];
+
+type View =
+  | { type: 'dashboard' }
+  | { type: 'audienceList' }
+  | { type: 'audienceDetail'; audience: Audience }
+  | { type: 'copyList' }
+  | { type: 'copyDetail'; copyBlock: CopyBlock };
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState<'audiences' | 'messaging'>('audiences');
+  const [view, setView] = useState<View>({ type: 'dashboard' });
   const [workspaces, setWorkspaces] = useState<(Workspace & { role: string })[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState<(Workspace & { role: string }) | null>(null);
   const [audiences, setAudiences] = useState<Audience[]>([]);
   const [copyBlocks, setCopyBlocks] = useState<CopyBlock[]>([]);
-  const [selectedAudience, setSelectedAudience] = useState<Audience | null>(null);
   const [loading, setLoading] = useState(true);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false);
 
   useEffect(() => {
@@ -73,13 +81,7 @@ export default function Dashboard() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-
       setAudiences(data || []);
-      if (data && data.length > 0) {
-        setSelectedAudience(data[0]);
-      } else {
-        setSelectedAudience(null);
-      }
     } catch (error) {
       console.error('Error fetching audiences:', error);
     }
@@ -106,15 +108,10 @@ export default function Dashboard() {
     await supabase.auth.signOut();
   };
 
-  const handleAudienceSelect = (audience: Audience) => {
-    setSelectedAudience(audience);
-    setDropdownOpen(false);
-  };
-
   const handleWorkspaceSelect = (workspace: Workspace & { role: string }) => {
     setSelectedWorkspace(workspace);
     setWorkspaceDropdownOpen(false);
-    setSelectedAudience(null);
+    setView({ type: 'dashboard' });
   };
 
   if (loading) {
@@ -125,17 +122,53 @@ export default function Dashboard() {
     );
   }
 
+  if (view.type === 'audienceList') {
+    return (
+      <AudienceList
+        audiences={audiences}
+        onSelectAudience={(audience) => setView({ type: 'audienceDetail', audience })}
+        onBack={() => setView({ type: 'dashboard' })}
+      />
+    );
+  }
+
+  if (view.type === 'audienceDetail') {
+    return (
+      <AudienceDetail
+        audience={view.audience}
+        onBack={() => setView({ type: 'audienceList' })}
+      />
+    );
+  }
+
+  if (view.type === 'copyList') {
+    return (
+      <CopyList
+        copyBlocks={copyBlocks}
+        onSelectCopyBlock={(copyBlock) => setView({ type: 'copyDetail', copyBlock })}
+        onBack={() => setView({ type: 'dashboard' })}
+      />
+    );
+  }
+
+  if (view.type === 'copyDetail') {
+    return (
+      <CopyDetail
+        copyBlock={view.copyBlock}
+        onBack={() => setView({ type: 'copyList' })}
+      />
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col bg-gray-50">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <header className="bg-white border-b border-gray-200 shadow-sm">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <img src="/wonderflow-coloricon.png" alt="Wonderflow" className="w-9 h-9" />
             </div>
             <div className="flex items-center gap-2">
-              {/* Workspace Selector */}
               {workspaces.length > 0 && selectedWorkspace && (
                 <div className="relative">
                   <button
@@ -177,14 +210,14 @@ export default function Dashboard() {
                   )}
                 </div>
               )}
-               <a
+              <a
                 href="https://app.wonderflow.io"
-              target="_blank"
-              rel="noopener noreferrer"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
                 title="Open App"
               >
-                <House className="w-4 h-4 text-gray-600" />
+                <Home className="w-4 h-4 text-gray-600" />
               </a>
               <button
                 onClick={handleSignOut}
@@ -196,142 +229,111 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Intro Message */}
-            <div className="relative bg-primary/5 border border-primary p-2">
-             <p className="text-sm font-semibold text-primary mb-1">
-               Use Wonderflow as a reference while you work</p>
-              <p className="text-xs text-gray-800">Open this panel while writing ads, emails, or landing pages. Pull audience insights and approved messaging without switching tools.</p>           
-            </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex border-t border-gray-200">
-          <button
-            onClick={() => setActiveTab('audiences')}
-            className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
-              activeTab === 'audiences'
-                ? 'text-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Audiences
-            {activeTab === 'audiences' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></div>
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('messaging')}
-            className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
-              activeTab === 'messaging'
-                ? 'text-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Copy
-            {activeTab === 'messaging' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></div>
-            )}
-          </button>
+          <div className="relative bg-primary/5 border border-primary p-2">
+            <p className="text-sm font-semibold text-primary mb-1">
+              Use Wonderflow as a reference while you work
+            </p>
+            <p className="text-xs text-gray-800">
+              Open this panel while writing ads, emails, or landing pages. Pull audience insights and approved messaging without switching tools.
+            </p>
+          </div>
         </div>
       </header>
 
-      {/* Content Area */}
-      <main className="flex-1 overflow-y-auto">
-        {activeTab === 'audiences' && (
-          <div className="p-4">
-            {!selectedWorkspace ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">Select a workspace to view audiences</p>
-              </div>
-            ) : audiences.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No audiences found in this workspace</p>
-              </div>
-            ) : selectedAudience ? (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">{selectedAudience.name}</h2>
-                {selectedAudience.notes && (
-                  <p className="text-gray-600 mb-4">{selectedAudience.notes}</p>
-                )}
-                <div className="flex flex-wrap items-center gap-4 text-sm">
-                  {selectedAudience.goal && (
-                    <div>
-                      <span className="text-gray-500">Goal:</span>
-                      <span className="ml-2 text-gray-900">{selectedAudience.goal}</span>
-                    </div>
-                  )}
-                  {selectedAudience.funnel_stage && (
-                    <div>
-                      <span className="text-gray-500">Stage:</span>
-                      <span className="ml-2 text-gray-900">{selectedAudience.funnel_stage}</span>
-                    </div>
-                  )}
-                  {selectedAudience.platforms && selectedAudience.platforms.length > 0 && (
-                    <div>
-                      <span className="text-gray-500">Platforms:</span>
-                      <span className="ml-2 text-gray-900">{selectedAudience.platforms.join(', ')}</span>
-                    </div>
-                  )}
-                </div>
-                {selectedAudience.tags && selectedAudience.tags.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {selectedAudience.tags.map((tag, index) => (
-                      <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <div className="mt-4 text-xs text-gray-500">
-                  Created: {new Date(selectedAudience.created_at).toLocaleDateString()}
-                </div>
-              </div>
-            ) : null}
+      <main className="flex-1 overflow-y-auto p-4">
+        {!selectedWorkspace ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Select a workspace to view your content</p>
           </div>
-        )}
+        ) : (
+          <div className="space-y-6">
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold text-gray-900">Audiences</h2>
+                {audiences.length > 0 && (
+                  <button
+                    onClick={() => setView({ type: 'audienceList' })}
+                    className="text-sm text-primary hover:text-primary-dark font-medium flex items-center gap-1"
+                  >
+                    View all
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
 
-        {activeTab === 'messaging' && (
-          <div className="p-4 space-y-3">
-            {!selectedWorkspace ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">Select a workspace to view copy</p>
+              {audiences.length === 0 ? (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                  <p className="text-gray-500">No audiences found in this workspace</p>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setView({ type: 'audienceDetail', audience: audiences[0] })}
+                  className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-primary transition-all text-left"
+                >
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{audiences[0].name}</h3>
+                  {audiences[0].notes && (
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{audiences[0].notes}</p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    {audiences[0].goal && (
+                      <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                        {audiences[0].goal}
+                      </span>
+                    )}
+                    {audiences[0].funnel_stage && (
+                      <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                        {audiences[0].funnel_stage}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )}
+            </section>
+
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold text-gray-900">Copy</h2>
+                {copyBlocks.length > 0 && (
+                  <button
+                    onClick={() => setView({ type: 'copyList' })}
+                    className="text-sm text-primary hover:text-primary-dark font-medium flex items-center gap-1"
+                  >
+                    View all
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                )}
               </div>
-            ) : copyBlocks.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No copy blocks found in this workspace</p>
-              </div>
-            ) : (
-              copyBlocks.map((block) => (
-                <div key={block.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+
+              {copyBlocks.length === 0 ? (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                  <p className="text-gray-500">No copy blocks found in this workspace</p>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setView({ type: 'copyDetail', copyBlock: copyBlocks[0] })}
+                  className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-primary transition-all text-left"
+                >
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-gray-900">{block.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{copyBlocks[0].name}</h3>
                     <div className="flex gap-2">
-                      {block.type && (
+                      {copyBlocks[0].type && (
                         <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                          {block.type}
+                          {copyBlocks[0].type}
                         </span>
                       )}
-                      {block.status && (
+                      {copyBlocks[0].status && (
                         <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                          {block.status}
+                          {copyBlocks[0].status}
                         </span>
                       )}
                     </div>
                   </div>
-                  {block.notes && (
-                    <p className="text-gray-700 text-sm leading-relaxed mb-3">{block.notes}</p>
+                  {copyBlocks[0].notes && (
+                    <p className="text-sm text-gray-600 line-clamp-2">{copyBlocks[0].notes}</p>
                   )}
-                  <div className="flex flex-wrap gap-3 text-xs text-gray-500">
-                    {block.category && <span>Category: {block.category}</span>}
-                    {block.intent && <span>Intent: {block.intent}</span>}
-                    {block.tone && <span>Tone: {block.tone}</span>}
-                  </div>
-                  <div className="mt-3 text-xs text-gray-500">
-                    {new Date(block.created_at).toLocaleDateString()}
-                  </div>
-                </div>
-              ))
-            )}
+                </button>
+              )}
+            </section>
           </div>
         )}
       </main>
