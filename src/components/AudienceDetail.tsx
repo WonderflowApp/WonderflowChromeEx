@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ChevronDown, ChevronRight, Copy, Check, Facebook, Instagram, Linkedin, Twitter, Youtube, Search, MousePointerClick } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronRight, Copy, Check, Facebook, Instagram, Linkedin, Twitter, Youtube, Search, Captions, MousePointerClick } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
 
