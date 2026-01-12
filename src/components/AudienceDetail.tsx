@@ -148,7 +148,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
 
       <main className="flex-1 overflow-y-auto p-4 space-y-4">
         {audience.notes && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+          <div>
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
               Description
             </h2>
@@ -156,29 +156,30 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
           <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
             Audience Details
           </h2>
           <div className="grid grid-cols-2 gap-4">
             {audience.goal && (
               <div>
-                <span className="text-sm font-medium text-gray-600">Goal:</span>
-                <p className="text-gray-900 capitalize">{audience.goal}</p>
+                <span className="text-xs font-medium text-gray-600">Goal:</span>
+                <p className="text-sm font-bold text-gray-900 capitalize">{audience.goal}</p>
               </div>
             )}
             {audience.funnel_stage && (
               <div>
-                <span className="text-sm font-medium text-gray-600">Funnel Stage:</span>
-                <p className="text-gray-900 capitalize">{audience.funnel_stage}</p>
+                <span className="text-xs font-medium text-gray-600">Funnel Stage:</span>
+                <p className="text-sm font-bold text-gray-900 capitalize">{audience.funnel_stage}</p>
               </div>
             )}
             {audience.funnel_type && (
               <div>
-                <span className="text-sm font-medium text-gray-600">Funnel Type:</span>
-                <p className="text-gray-900 capitalize">{audience.funnel_type}</p>
+                <span className="text-xs font-medium text-gray-600">Funnel Type:</span>
+                <p className="text-sm font-bold text-gray-900 capitalize">{audience.funnel_type}</p>
               </div>
             )}
+          </div>
              <div className="flex flex-wrap gap-2">
               {audience.platforms.map((platform, index) => (
                 <span
