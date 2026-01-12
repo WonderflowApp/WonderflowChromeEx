@@ -268,7 +268,7 @@ export default function Dashboard() {
                   onClick={() => setView({ type: 'audienceDetail', audience: audiences[0] })}
                   className="w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-primary transition-all text-left"
                 >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{audiences[0].name}</h3>
+                  <h3 className="text-md font-semibold text-gray-900 mb-2">{audiences[0].name}</h3>
                   {audiences[0].notes && (
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">{audiences[0].notes}</p>
                   )}
