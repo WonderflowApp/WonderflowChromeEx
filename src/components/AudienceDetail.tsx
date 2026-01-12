@@ -274,7 +274,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
                               </span>
                             )}
 
-                            {block.messaging && (
+                            {block.messaging && block.objection == null && (
                               <div className="relative group">
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="flex-1">
