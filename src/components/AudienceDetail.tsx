@@ -212,7 +212,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
         {painPoints.length > 0 && (
           <div>
             <div className="flex items-center gap-3">
-            <MousePointerClick className="h-4 w-4" />
+            <MousePointerClick className="h-4 w-4 text-gray-700" />
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
               Pain Points
             </h2>
@@ -232,10 +232,13 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
         )}
 
         {pillars.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+          <div>
+            <div className="flex items-center gap-3">
+            <Captions className="h-4 w-4 text-gray-700" />
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
               Content Pillars
             </h2>
+            </div>
             <div className="space-y-3">
               {pillars.map((pillar) => {
                 const isExpanded = expandedPillars.has(pillar.id);
