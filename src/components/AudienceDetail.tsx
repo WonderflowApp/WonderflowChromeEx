@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ChevronDown, ChevronRight, Copy, Check, Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronRight, Copy, Check, Facebook, Instagram, Linkedin, Twitter, Youtube, Search } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
 
@@ -24,6 +24,7 @@ const platformIcons: Record<string, React.ComponentType<{ className?: string }>>
   linkedin: Linkedin,
   twitter: Twitter,
   youtube: Youtube,
+  google: Search,
 };
 
 export default function AudienceDetail({ audience, onBack }: AudienceDetailProps) {
@@ -136,8 +137,8 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{audience.name}</h1>
-            <p className="text-sm text-gray-500">
+            <h1 className="text-lg font-bold text-gray-900">{audience.name}</h1>
+            <p className="text-xs text-gray-500">
               Created {new Date(audience.created_at).toLocaleDateString()}
             </p>
           </div>
