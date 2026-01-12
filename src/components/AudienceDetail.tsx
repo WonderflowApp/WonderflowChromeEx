@@ -182,7 +182,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
             )}
           </div>
             <div>
-            <span className="text-xs font-medium text-gray-600">Platforms</span>
+            <span className="text-xs font-medium text-gray-600 mt-3">Platforms</span>
              <div className="flex flex-wrap gap-2">
               {audience.platforms.map((platform, index) => (
                 <span
