@@ -247,7 +247,7 @@ export default function Dashboard() {
           <div className="space-y-6">
             <section>
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-md font-bold text-gray-900">Audiences</h2>
+                <h2 className="text-lg font-bold text-gray-900">Audiences</h2>
                 {audiences.length > 0 && (
                   <button
                     onClick={() => setView({ type: 'audienceList' })}
