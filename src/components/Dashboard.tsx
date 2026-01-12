@@ -247,7 +247,7 @@ export default function Dashboard() {
           <div className="space-y-6">
             <section>
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-lg font-bold text-gray-900">Audiences</h2>
+                <h2 className="text-md font-bold text-gray-900">Audiences</h2>
                 {audiences.length > 0 && (
                   <button
                     onClick={() => setView({ type: 'audienceList' })}
@@ -268,18 +268,18 @@ export default function Dashboard() {
                   onClick={() => setView({ type: 'audienceDetail', audience: audiences[0] })}
                   className="w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-primary transition-all text-left"
                 >
-                  <h3 className="text-md font-semibold text-gray-900 mb-2">{audiences[0].name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{audiences[0].name}</h3>
                   {audiences[0].notes && (
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">{audiences[0].notes}</p>
                   )}
                   <div className="flex flex-wrap gap-2 mb-2">
                     {audiences[0].goal && (
-                      <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                      <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full capitalize">
                         {audiences[0].goal}
                       </span>
                     )}
                     {audiences[0].funnel_stage && (
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                      <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full capitalize">
                         {audiences[0].funnel_stage}
                       </span>
                     )}
