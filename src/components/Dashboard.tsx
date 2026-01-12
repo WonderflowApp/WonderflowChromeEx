@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { LogOut, ChevronDown } from 'lucide-react';
+import { LogOut, ChevronDown, House } from 'lucide-react';
 import type { Database } from '../lib/database.types';
 
 type Audience = Database['public']['Tables']['audiences']['Row'];
@@ -177,9 +177,18 @@ export default function Dashboard() {
                   )}
                 </div>
               )}
+               <a
+                href="https://app.wonderflow.io"
+              target="_blank"
+              rel="noopener noreferrer"
+                className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                title="Open App"
+              >
+                <House className="w-4 h-4 text-gray-600" />
+              </a>
               <button
                 onClick={handleSignOut}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
                 title="Sign out"
               >
                 <LogOut className="w-4 h-4 text-gray-600" />
