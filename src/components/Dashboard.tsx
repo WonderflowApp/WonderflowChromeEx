@@ -196,38 +196,9 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Audience Dropdown */}
-          {audiences.length > 0 && (
+          {/* Intro Message */}
             <div className="relative">
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors"
-              >
-                <span className="font-medium text-gray-900 truncate">
-                  {selectedAudience?.name || 'Select an audience'}
-                </span>
-                <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
 
-              {dropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto z-50">
-                  {audiences.map((audience) => (
-                    <button
-                      key={audience.id}
-                      onClick={() => handleAudienceSelect(audience)}
-                      className={`w-full text-left px-4 py-2.5 hover:bg-gray-50 transition-colors ${
-                        selectedAudience?.id === audience.id ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
-                      }`}
-                    >
-                      <div className="font-medium truncate">{audience.name}</div>
-                      {audience.description && (
-                        <div className="text-xs text-gray-500 truncate mt-0.5">{audience.description}</div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
           )}
         </div>
 
