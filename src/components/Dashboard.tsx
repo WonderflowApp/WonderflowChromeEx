@@ -246,7 +246,7 @@ export default function Dashboard() {
         ) : (
           <div className="space-y-6">
             <section>
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-1">
                 <h2 className="text-md font-bold text-gray-900">Audiences</h2>
                 {audiences.length > 0 && (
                   <button
@@ -289,7 +289,7 @@ export default function Dashboard() {
             </section>
 
             <section>
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-1">
                 <h2 className="text-md font-bold text-gray-900">Copy</h2>
                 {copyBlocks.length > 0 && (
                   <button
