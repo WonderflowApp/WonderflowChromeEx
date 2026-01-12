@@ -272,7 +272,7 @@ export default function Dashboard() {
                   {audiences[0].notes && (
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">{audiences[0].notes}</p>
                   )}
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-2">
                     {audiences[0].goal && (
                       <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
                         {audiences[0].goal}
@@ -284,6 +284,9 @@ export default function Dashboard() {
                       </span>
                     )}
                   </div>
+                     <p className="text-xs text-gray-500">
+                 Created {new Date(audience.created_at).toLocaleDateString()}
+                </p>
                 </button>
               )}
             </section>
