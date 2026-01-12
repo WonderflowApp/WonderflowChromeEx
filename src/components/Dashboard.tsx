@@ -39,6 +39,70 @@ export default function Dashboard() {
     }
   }, [selectedWorkspace]);
 
+  useEffect(() => {
+    const savedView = localStorage.getItem('currentView');
+    if (savedView && selectedWorkspace && audiences.length > 0 && copyBlocks.length > 0) {
+      try {
+        const parsedView = JSON.parse(savedView);
+
+        if (parsedView.workspaceId !== selectedWorkspace.id) {
+          return;
+        }
+
+        if (parsedView.type === 'audienceDetail' && parsedView.audienceId) {
+          const audience = audiences.find(a => a.id === parsedView.audienceId);
+          if (audience) {
+            setView({ type: 'audienceDetail', audience });
+          }
+        } else if (parsedView.type === 'copyDetail' && parsedView.copyBlockId) {
+          const copyBlock = copyBlocks.find(c => c.id === parsedView.copyBlockId);
+          if (copyBlock) {
+            setView({ type: 'copyDetail', copyBlock });
+          }
+        } else if (parsedView.type === 'audienceList') {
+          setView({ type: 'audienceList' });
+        } else if (parsedView.type === 'copyList') {
+          setView({ type: 'copyList' });
+        }
+      } catch (error) {
+        console.error('Error restoring view:', error);
+      }
+    }
+  }, [audiences, copyBlocks, selectedWorkspace]);
+
+  useEffect(() => {
+    if (!selectedWorkspace) return;
+
+    if (view.type === 'audienceDetail') {
+      localStorage.setItem('currentView', JSON.stringify({
+        type: 'audienceDetail',
+        audienceId: view.audience.id,
+        workspaceId: selectedWorkspace.id
+      }));
+    } else if (view.type === 'copyDetail') {
+      localStorage.setItem('currentView', JSON.stringify({
+        type: 'copyDetail',
+        copyBlockId: view.copyBlock.id,
+        workspaceId: selectedWorkspace.id
+      }));
+    } else if (view.type === 'audienceList') {
+      localStorage.setItem('currentView', JSON.stringify({
+        type: 'audienceList',
+        workspaceId: selectedWorkspace.id
+      }));
+    } else if (view.type === 'copyList') {
+      localStorage.setItem('currentView', JSON.stringify({
+        type: 'copyList',
+        workspaceId: selectedWorkspace.id
+      }));
+    } else {
+      localStorage.setItem('currentView', JSON.stringify({
+        type: 'dashboard',
+        workspaceId: selectedWorkspace.id
+      }));
+    }
+  }, [view, selectedWorkspace]);
+
   const fetchWorkspaces = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -112,6 +176,7 @@ export default function Dashboard() {
     setSelectedWorkspace(workspace);
     setWorkspaceDropdownOpen(false);
     setView({ type: 'dashboard' });
+    localStorage.removeItem('currentView');
   };
 
   if (loading) {
