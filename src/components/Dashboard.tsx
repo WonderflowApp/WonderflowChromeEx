@@ -227,7 +227,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="relative bg-primary/5 border border-primary p-2 rounded-xl">
+          <div className="relative bg-primary/5 border border-primary p-2 rounded-xl my-2">
             <p className="text-sm font-semibold text-primary">
               Use Wonderflow as a reference while you work
             </p>
@@ -247,11 +247,11 @@ export default function Dashboard() {
           <div className="space-y-6">
             <section>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-bold text-gray-900">Audiences</h2>
+                <h2 className="text-md font-bold text-gray-900">Audiences</h2>
                 {audiences.length > 0 && (
                   <button
                     onClick={() => setView({ type: 'audienceList' })}
-                    className="text-sm text-primary hover:text-primary-dark font-medium flex items-center gap-1"
+                    className="text-xs text-primary hover:text-primary-dark font-medium flex items-center gap-1"
                   >
                     View all
                     <ChevronRight className="w-4 h-4" />
@@ -260,13 +260,13 @@ export default function Dashboard() {
               </div>
 
               {audiences.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
                   <p className="text-gray-500">No audiences found in this workspace</p>
                 </div>
               ) : (
                 <button
                   onClick={() => setView({ type: 'audienceDetail', audience: audiences[0] })}
-                  className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-primary transition-all text-left"
+                  className="w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-primary transition-all text-left"
                 >
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{audiences[0].name}</h3>
                   {audiences[0].notes && (
@@ -290,11 +290,11 @@ export default function Dashboard() {
 
             <section>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-bold text-gray-900">Copy</h2>
+                <h2 className="text-md font-bold text-gray-900">Copy</h2>
                 {copyBlocks.length > 0 && (
                   <button
                     onClick={() => setView({ type: 'copyList' })}
-                    className="text-sm text-primary hover:text-primary-dark font-medium flex items-center gap-1"
+                    className="text-xl text-primary hover:text-primary-dark font-medium flex items-center gap-1"
                   >
                     View all
                     <ChevronRight className="w-4 h-4" />
@@ -303,13 +303,13 @@ export default function Dashboard() {
               </div>
 
               {copyBlocks.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
                   <p className="text-gray-500">No copy blocks found in this workspace</p>
                 </div>
               ) : (
                 <button
                   onClick={() => setView({ type: 'copyDetail', copyBlock: copyBlocks[0] })}
-                  className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-primary transition-all text-left"
+                  className="w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-primary transition-all text-left"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="text-lg font-semibold text-gray-900">{copyBlocks[0].name}</h3>
