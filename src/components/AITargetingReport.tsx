@@ -89,7 +89,7 @@ export default function AITargetingReport({ data }: AITargetingReportProps) {
       {data.audience_suggestions && (
         <div className="bg-white rounded-lg p-6 border border-gray-200">
           <div className="flex items-center gap-2 mb-2">
-            <Users className="w-5 h-5 text-gray-700" />
+            <Users className="w-4 h-4 text-gray-700" />
             <h3 className="text-base font-semibold text-gray-900">Audience Suggestions</h3>
           </div>
 
@@ -151,7 +151,7 @@ export default function AITargetingReport({ data }: AITargetingReportProps) {
       {data.targeting_categories && data.targeting_categories.length > 0 && (
         <div className="bg-white rounded-lg p-6 border border-gray-200">
           <div className="flex items-center gap-2 mb-2">
-            <Target className="w-5 h-5 text-gray-700" />
+            <Target className="w-4 h-4 text-gray-700" />
             <h3 className="text-base font-semibold text-gray-900">Targeting Categories</h3>
           </div>
 
