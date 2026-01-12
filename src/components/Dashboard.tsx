@@ -140,9 +140,9 @@ export default function Dashboard() {
                 <div className="relative">
                   <button
                     onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
-                    className="flex items-center gap-2 px-3 py-1 bg-white rounded-lg transition-colors text-sm"
+                    className="flex items-center gap-2 px-3 py-1 bg-white text-gray-700 hover:text-gray-900 rounded-lg transition-colors text-sm"
                   >
-                    <span className="font-medium text-gray-900 max-w-[150px] truncate">
+                    <span className="font-medium max-w-[150px] truncate">
                       {selectedWorkspace.name}
                     </span>
                     <span className="text-xs px-1.5 py-0.5 bg-primary text-blue-700 rounded-full uppercase font-semibold">
