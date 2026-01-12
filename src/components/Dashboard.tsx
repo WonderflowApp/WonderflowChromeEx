@@ -231,8 +231,8 @@ export default function Dashboard() {
             <p className="text-sm font-semibold text-primary">
               Use Wonderflow as a reference while you work
             </p>
-            <p className="text-xs text-gray-800">
-              Open this panel while writing ads, emails, or landing pages. Pull audience insights and approved messaging without switching tools.
+            <p className="text-xs text-primary">
+              Open this panel while creating ads, emails, or landing pages. Pull audience insights and approved messaging without switching tools.
             </p>
           </div>
         </div>
