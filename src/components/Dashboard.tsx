@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { LogOut, ChevronDown, Home, ChevronRight } from 'lucide-react';
+import { LogOut, ChevronDown, Home, ChevronRight, Building2 } from 'lucide-react';
 import type { Database } from '../lib/database.types';
 import AudienceList from './AudienceList';
 import AudienceDetail from './AudienceDetail';
@@ -175,11 +175,9 @@ export default function Dashboard() {
                     onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
                     className="flex items-center gap-2 px-3 py-1 bg-white text-gray-700 hover:text-gray-900 rounded-lg transition-colors text-sm"
                   >
+                     <Building2 className="h-4 w-4" />
                     <span className="font-medium max-w-[150px] truncate">
                       {selectedWorkspace.name}
-                    </span>
-                    <span className="text-xs px-1.5 py-0.5 bg-primary text-blue-700 rounded-full uppercase font-semibold">
-                      {selectedWorkspace.role}
                     </span>
                     <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${workspaceDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
@@ -229,8 +227,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="relative bg-primary/5 border border-primary p-2">
-            <p className="text-sm font-semibold text-primary mb-1">
+          <div className="relative bg-primary/5 border border-primary p-2 rounded-xl">
+            <p className="text-sm font-semibold text-primary">
               Use Wonderflow as a reference while you work
             </p>
             <p className="text-xs text-gray-800">
@@ -243,7 +241,7 @@ export default function Dashboard() {
       <main className="flex-1 overflow-y-auto p-4">
         {!selectedWorkspace ? (
           <div className="text-center py-12">
-            <p className="text-gray-500">Select a workspace to view your content</p>
+            <p className="text-gray-500">Select a workspace</p>
           </div>
         ) : (
           <div className="space-y-6">
