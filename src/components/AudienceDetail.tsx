@@ -159,7 +159,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
             Audience Details
           </h2>
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-4">
             {audience.goal && (
               <div>
                 <span className="text-sm font-medium text-gray-600">Goal:</span>
@@ -182,7 +182,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
               {audience.platforms.map((platform, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
+                  className="px-3 py-1.5 bg-primary text-white rounded-full text-sm font-medium"
                 >
                   {platform}
                 </span>
