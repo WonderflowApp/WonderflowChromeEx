@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, ChevronDown, ChevronRight, Copy, Check, Facebook, Instagram, Linkedin, Twitter, Youtube, Search, Captions, MousePointerClick, Target } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
+import AITargetingReport from './AITargetingReport';
 
 type Audience = Database['public']['Tables']['audiences']['Row'];
 type PainPoint = Database['public']['Tables']['audience_pain_points']['Row'];
@@ -368,12 +369,13 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
 
                     {isExpanded && layer.ai_targeting_report && (
                       <div className="p-4 bg-white">
-                        <h4 className="text-sm font-semibold text-gray-700 mb-2">AI Targeting Report</h4>
-                        <div className="text-sm text-gray-900 whitespace-pre-wrap leading-relaxed">
-                          {typeof layer.ai_targeting_report === 'string'
-                            ? layer.ai_targeting_report
-                            : JSON.stringify(layer.ai_targeting_report, null, 2)}
-                        </div>
+                        <h4 className="text-sm font-semibold text-gray-700 mb-4">AI Targeting Report</h4>
+                        <AITargetingReport
+                          data={typeof layer.ai_targeting_report === 'string'
+                            ? JSON.parse(layer.ai_targeting_report)
+                            : layer.ai_targeting_report
+                          }
+                        />
                       </div>
                     )}
                   </div>
