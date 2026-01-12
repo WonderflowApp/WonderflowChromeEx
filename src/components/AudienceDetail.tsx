@@ -239,9 +239,9 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
 
         {pillars.length > 0 && (
           <div>
-            <div className="flex items-center gap-3">
-            <Captions className="h-4 w-4 text-gray-700" />
-            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+            <div className="flex items-center gap-3 mb-2">
+            <Captions className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
               Content Pillars
             </span>
             </div>
@@ -249,10 +249,10 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
               {pillars.map((pillar) => {
                 const isExpanded = expandedPillars.has(pillar.id);
                 return (
-                  <div key={pillar.id} className="border border-gray-100 rounded-lg overflow-hidden bg-white">
+                  <div key={pillar.id} className="border border-gray-100 rounded-lg overflow-hidden">
                     <button
                       onClick={() => togglePillar(pillar.id)}
-                      className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                      className="w-full flex items-center justify-between p-4 bg-white hover:bg-gray-100 transition-colors text-left"
                     >
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900">{pillar.name}</h3>
@@ -341,9 +341,9 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
 
         {targetingLayers.length > 0 && (
           <div>
-            <div className="flex items-center gap-3">
-              <Target className="h-4 w-4 text-gray-700" />
-            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+            <div className="flex items-center gap-3 mb-2">
+              <Target className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
               Targeting Layers
             </span>
             </div>
@@ -356,7 +356,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
                   <div key={layer.id} className="border border-gray-200 rounded-lg overflow-hidden">
                     <button
                       onClick={() => toggleTargeting(layer.id)}
-                      className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                      className="w-full flex items-center justify-between p-4 bg-white hover:bg-gray-100 transition-colors text-left"
                     >
                       <div className="flex items-center gap-3 flex-1">
                         {PlatformIcon && <PlatformIcon className="w-5 h-5 text-gray-600" />}
