@@ -159,34 +159,26 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
             Audience Details
           </h2>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {audience.goal && (
               <div>
                 <span className="text-sm font-medium text-gray-600">Goal:</span>
-                <p className="text-gray-900 mt-1">{audience.goal}</p>
+                <p className="text-gray-900 capitalize">{audience.goal}</p>
               </div>
             )}
             {audience.funnel_stage && (
               <div>
                 <span className="text-sm font-medium text-gray-600">Funnel Stage:</span>
-                <p className="text-gray-900 mt-1">{audience.funnel_stage}</p>
+                <p className="text-gray-900 capitalize">{audience.funnel_stage}</p>
               </div>
             )}
             {audience.funnel_type && (
               <div>
                 <span className="text-sm font-medium text-gray-600">Funnel Type:</span>
-                <p className="text-gray-900 mt-1">{audience.funnel_type}</p>
+                <p className="text-gray-900 capitalize">{audience.funnel_type}</p>
               </div>
             )}
-          </div>
-        </div>
-
-        {audience.platforms && audience.platforms.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
-              Targeting Platforms
-            </h2>
-            <div className="flex flex-wrap gap-2">
+             <div className="flex flex-wrap gap-2">
               {audience.platforms.map((platform, index) => (
                 <span
                   key={index}
@@ -197,7 +189,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
               ))}
             </div>
           </div>
-        )}
+        </div>
 
         {audience.tags && audience.tags.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
