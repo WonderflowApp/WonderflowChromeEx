@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Wonderflow",
-  "version": "1.0.0",
-  "description": "Access your Wonderflow marketing audiences and messaging",
+  "version": "1.0.5",
+  "description": "Access your Wonderflow marketing audiences and copy.",
   "permissions": [
     "storage",
     "identity"
