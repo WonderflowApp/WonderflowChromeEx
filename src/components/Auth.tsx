@@ -50,14 +50,14 @@ export default function Auth() {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-primary/15 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center justify-center mb-2">
             <img src="/wonderflow-coloricon.png" alt="Wonderflow" className="w-16 h-16" />
           </div>
 
-          <h1 className="text-3xl font-bold text-center mb-2 text-gray-900">
+          <h1 className="text-3xl font-bold text-center text-gray-900">
             Wonderflow
           </h1>
-          <p className="text-center text-gray-600 mb-8">
+          <p className="text-center text-gray-600 mb-3">
             Sign in to access your Audiences and Copy
           </p>
 
@@ -101,13 +101,13 @@ export default function Auth() {
             <button
               type="submit"
               disabled={loading || googleLoading}
-              className="w-full bg-primary text-white py-3 rounded-full font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary-dark"
+              className="w-full bg-primary text-white py-3 rounded-full text-md font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary-dark"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <div className="relative my-6">
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
             </div>
