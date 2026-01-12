@@ -160,6 +160,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
             Audience Details
           </h2>
+          <div>
           <div className="grid grid-cols-2 gap-4">
             {audience.goal && (
               <div>
