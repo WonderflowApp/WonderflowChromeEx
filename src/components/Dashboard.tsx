@@ -285,7 +285,7 @@ export default function Dashboard() {
                     )}
                   </div>
                      <p className="text-xs text-gray-500">
-                 Created {new Date(audience.created_at).toLocaleDateString()}
+                 Created {new Date(audiences[0].created_at).toLocaleDateString()}
                 </p>
                 </button>
               )}
