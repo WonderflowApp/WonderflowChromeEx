@@ -156,8 +156,8 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-5">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+        <div className="bg-white rounded-xl border border-gray-100 p-4">
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
             Audience Details
           </h2>
           <div>
