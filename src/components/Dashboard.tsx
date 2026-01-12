@@ -227,7 +227,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="relative bg-primary/5 border border-primary p-2 rounded-2xl my-2">
+          <div className="relative bg-primary/5 border border-primary py-2 px-3 rounded-2xl my-2">
             <p className="text-sm font-semibold text-primary">
               Use Wonderflow as a reference while you work
             </p>
