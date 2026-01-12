@@ -149,9 +149,9 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
       <main className="flex-1 overflow-y-auto p-4 space-y-4">
         {audience.notes && (
           <div>
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+            <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1">
               Description
-            </h2>
+            </span>
             <p className="text-gray-900 leading-relaxed whitespace-pre-wrap">{audience.notes}</p>
           </div>
         )}
@@ -164,23 +164,25 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           <div className="grid grid-cols-2 gap-4">
             {audience.goal && (
               <div>
-                <span className="text-xs font-medium text-gray-600">Goal:</span>
+                <span className="text-xs font-medium text-gray-600">Goal</span>
                 <p className="text-sm font-bold text-gray-900 capitalize">{audience.goal}</p>
               </div>
             )}
             {audience.funnel_stage && (
               <div>
-                <span className="text-xs font-medium text-gray-600">Funnel Stage:</span>
+                <span className="text-xs font-medium text-gray-600">Funnel Stage</span>
                 <p className="text-sm font-bold text-gray-900 capitalize">{audience.funnel_stage}</p>
               </div>
             )}
             {audience.funnel_type && (
               <div>
-                <span className="text-xs font-medium text-gray-600">Funnel Type:</span>
+                <span className="text-xs font-medium text-gray-600">Funnel Type</span>
                 <p className="text-sm font-bold text-gray-900 capitalize">{audience.funnel_type}</p>
               </div>
             )}
           </div>
+            <div>
+            <span className="text-xs font-medium text-gray-600">Platforms</span>
              <div className="flex flex-wrap gap-2">
               {audience.platforms.map((platform, index) => (
                 <span
@@ -190,6 +192,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
                   {platform}
                 </span>
               ))}
+            </div>
             </div>
           </div>
         </div>
@@ -214,9 +217,9 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
 
         {painPoints.length > 0 && (
           <div>
-            <div className="flex items-center gap-3">
-            <MousePointerClick className="h-4 w-4 text-gray-700" />
-            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+            <div className="flex items-center gap-2 mb-2">
+            <MousePointerClick className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
               Pain Points
             </span>
           </div>
