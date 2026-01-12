@@ -216,15 +216,15 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           <div>
             <div className="flex items-center gap-3">
             <MousePointerClick className="h-4 w-4 text-gray-700" />
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
               Pain Points
-            </h2>
+            </span>
           </div>
-            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5 scrollbar-hide">
+            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 px-5 scrollbar-hide">
               {painPoints.map((painPoint) => (
                 <div
                   key={painPoint.id}
-                  className="flex-shrink-0 w-72 bg-gray-50 rounded-lg p-4 border border-gray-200 snap-start"
+                  className="flex-shrink-0 w-72 bg-white rounded-lg p-4 border border-gray-200 snap-start"
                 >
                   <h3 className="font-semibold text-gray-900 mb-2">{painPoint.title}</h3>
                   <p className="text-sm text-gray-600 leading-relaxed">{painPoint.description}</p>
@@ -238,15 +238,15 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           <div>
             <div className="flex items-center gap-3">
             <Captions className="h-4 w-4 text-gray-700" />
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+            <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
               Content Pillars
-            </h2>
+            </span>
             </div>
             <div className="space-y-3">
               {pillars.map((pillar) => {
                 const isExpanded = expandedPillars.has(pillar.id);
                 return (
-                  <div key={pillar.id} className="border border-gray-100 rounded-lg overflow-hidden">
+                  <div key={pillar.id} className="border border-gray-100 rounded-lg overflow-hidden bg-white">
                     <button
                       onClick={() => togglePillar(pillar.id)}
                       className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
