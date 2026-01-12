@@ -69,12 +69,12 @@ export default function AudienceList({ audiences, onSelectAudience, onBack }: Au
                 )}
                 <div className="flex flex-wrap gap-2 mb-2">
                   {audience.goal && (
-                    <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                    <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full capitalize">
                       {audience.goal}
                     </span>
                   )}
                   {audience.funnel_stage && (
-                    <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                    <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full capitalize">
                       {audience.funnel_stage}
                     </span>
                   )}
