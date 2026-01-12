@@ -63,10 +63,7 @@ export default function AudienceList({ audiences, onSelectAudience, onBack }: Au
                 onClick={() => onSelectAudience(audience)}
                 className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary transition-all text-left"
               >
-                <h3 className="font-semibold text-gray-900 mb-2">{audience.name}</h3>
-                <p className="text-xs text-gray-500">
-                 Created {new Date(audience.created_at).toLocaleDateString()}
-                </p>
+                <h3 className="text-md font-semibold text-gray-900 mb-2">{audience.name}</h3>
                 {audience.notes && (
                   <p className="text-sm text-gray-600 mb-3 line-clamp-2">{audience.notes}</p>
                 )}
@@ -94,6 +91,9 @@ export default function AudienceList({ audiences, onSelectAudience, onBack }: Au
                         +{audience.tags.length - 3} more
                       </span>
                     )}
+                       <p className="text-xs text-gray-500">
+                 Created {new Date(audience.created_at).toLocaleDateString()}
+                </p>
                   </div>
                 )}
               </button>
