@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { LogOut, ChevronDown, Home, ChevronRight, Building2 } from 'lucide-react';
+import { LogOut, ChevronDown, Home, ChevronRight, Building2, Loader2 } from 'lucide-react';
 import type { Database } from '../lib/database.types';
 import AudienceList from './AudienceList';
 import AudienceDetail from './AudienceDetail';
@@ -207,8 +207,8 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
       </div>
     );
   }
