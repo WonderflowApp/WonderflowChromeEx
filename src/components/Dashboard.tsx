@@ -358,7 +358,7 @@ export default function Dashboard() {
 
             <section>
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-md font-bold text-gray-900">Copy</h2>
+                <h2 className="text-md font-bold text-gray-900">Playbooks</h2>
                 {copyBlocks.length > 0 && (
                   <button
                     onClick={() => setView({ type: 'copyList' })}
