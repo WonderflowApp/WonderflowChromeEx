@@ -432,6 +432,155 @@ export interface Database {
           is_ai_generated?: boolean | null
         }
       }
+      playbooks: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          workspace_id: string
+          created_by: string
+          created_at: string
+          updated_at: string
+          is_public: boolean
+          share_token: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          workspace_id: string
+          created_by: string
+          created_at?: string
+          updated_at?: string
+          is_public?: boolean
+          share_token?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          workspace_id?: string
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+          is_public?: boolean
+          share_token?: string | null
+        }
+      }
+      playbook_pages: {
+        Row: {
+          id: string
+          playbook_id: string
+          name: string
+          order_index: number
+          created_at: string
+          updated_at: string
+          description: string | null
+        }
+        Insert: {
+          id?: string
+          playbook_id: string
+          name?: string
+          order_index?: number
+          created_at?: string
+          updated_at?: string
+          description?: string | null
+        }
+        Update: {
+          id?: string
+          playbook_id?: string
+          name?: string
+          order_index?: number
+          created_at?: string
+          updated_at?: string
+          description?: string | null
+        }
+      }
+      playbook_sections: {
+        Row: {
+          id: string
+          playbook_id: string
+          page_id: string
+          name: string
+          category: string
+          type: string
+          intent: string
+          tone: string
+          length: string
+          order_index: number
+          created_by: string
+          created_at: string
+          updated_at: string
+          is_active: boolean
+        }
+        Insert: {
+          id?: string
+          playbook_id: string
+          page_id: string
+          name: string
+          category: string
+          type: string
+          intent: string
+          tone: string
+          length: string
+          order_index?: number
+          created_by: string
+          created_at?: string
+          updated_at?: string
+          is_active?: boolean
+        }
+        Update: {
+          id?: string
+          playbook_id?: string
+          page_id?: string
+          name?: string
+          category?: string
+          type?: string
+          intent?: string
+          tone?: string
+          length?: string
+          order_index?: number
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+          is_active?: boolean
+        }
+      }
+      section_variants: {
+        Row: {
+          id: string
+          section_id: string
+          variant_label: string
+          content: string
+          character_count: number
+          is_primary: boolean
+          created_at: string
+          updated_at: string
+          rich_content: Json | null
+        }
+        Insert: {
+          id?: string
+          section_id: string
+          variant_label: string
+          content?: string
+          character_count?: number
+          is_primary?: boolean
+          created_at?: string
+          updated_at?: string
+          rich_content?: Json | null
+        }
+        Update: {
+          id?: string
+          section_id?: string
+          variant_label?: string
+          content?: string
+          character_count?: number
+          is_primary?: boolean
+          created_at?: string
+          updated_at?: string
+          rich_content?: Json | null
+        }
+      }
     }
   }
 }

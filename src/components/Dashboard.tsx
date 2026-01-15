@@ -4,26 +4,26 @@ import { LogOut, ChevronDown, Home, ChevronRight, Building2 } from 'lucide-react
 import type { Database } from '../lib/database.types';
 import AudienceList from './AudienceList';
 import AudienceDetail from './AudienceDetail';
-import CopyList from './CopyList';
-import CopyDetail from './CopyDetail';
+import PlaybookList from './PlaybookList';
+import PlaybookDetail from './PlaybookDetail';
 
 type Audience = Database['public']['Tables']['audiences']['Row'];
-type CopyBlock = Database['public']['Tables']['copy_blocks']['Row'];
+type Playbook = Database['public']['Tables']['playbooks']['Row'];
 type Workspace = Database['public']['Tables']['workspaces']['Row'];
 
 type View =
   | { type: 'dashboard' }
   | { type: 'audienceList' }
   | { type: 'audienceDetail'; audience: Audience }
-  | { type: 'copyList' }
-  | { type: 'copyDetail'; copyBlock: CopyBlock };
+  | { type: 'playbookList' }
+  | { type: 'playbookDetail'; playbook: Playbook };
 
 export default function Dashboard() {
   const [view, setView] = useState<View>({ type: 'dashboard' });
   const [workspaces, setWorkspaces] = useState<(Workspace & { role: string })[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState<(Workspace & { role: string }) | null>(null);
   const [audiences, setAudiences] = useState<Audience[]>([]);
-  const [copyBlocks, setCopyBlocks] = useState<CopyBlock[]>([]);
+  const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
   const [loading, setLoading] = useState(true);
   const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false);
 
@@ -34,14 +34,14 @@ export default function Dashboard() {
   useEffect(() => {
     if (selectedWorkspace) {
       fetchAudiences();
-      fetchCopyBlocks();
+      fetchPlaybooks();
       localStorage.setItem('selectedWorkspaceId', selectedWorkspace.id);
     }
   }, [selectedWorkspace]);
 
   useEffect(() => {
     const savedView = localStorage.getItem('currentView');
-    if (savedView && selectedWorkspace && audiences.length > 0 && copyBlocks.length > 0) {
+    if (savedView && selectedWorkspace && audiences.length > 0 && playbooks.length > 0) {
       try {
         const parsedView = JSON.parse(savedView);
 
@@ -54,21 +54,21 @@ export default function Dashboard() {
           if (audience) {
             setView({ type: 'audienceDetail', audience });
           }
-        } else if (parsedView.type === 'copyDetail' && parsedView.copyBlockId) {
-          const copyBlock = copyBlocks.find(c => c.id === parsedView.copyBlockId);
-          if (copyBlock) {
-            setView({ type: 'copyDetail', copyBlock });
+        } else if (parsedView.type === 'playbookDetail' && parsedView.playbookId) {
+          const playbook = playbooks.find(p => p.id === parsedView.playbookId);
+          if (playbook) {
+            setView({ type: 'playbookDetail', playbook });
           }
         } else if (parsedView.type === 'audienceList') {
           setView({ type: 'audienceList' });
-        } else if (parsedView.type === 'copyList') {
-          setView({ type: 'copyList' });
+        } else if (parsedView.type === 'playbookList') {
+          setView({ type: 'playbookList' });
         }
       } catch (error) {
         console.error('Error restoring view:', error);
       }
     }
-  }, [audiences, copyBlocks, selectedWorkspace]);
+  }, [audiences, playbooks, selectedWorkspace]);
 
   useEffect(() => {
     if (!selectedWorkspace) return;
@@ -79,10 +79,10 @@ export default function Dashboard() {
         audienceId: view.audience.id,
         workspaceId: selectedWorkspace.id
       }));
-    } else if (view.type === 'copyDetail') {
+    } else if (view.type === 'playbookDetail') {
       localStorage.setItem('currentView', JSON.stringify({
-        type: 'copyDetail',
-        copyBlockId: view.copyBlock.id,
+        type: 'playbookDetail',
+        playbookId: view.playbook.id,
         workspaceId: selectedWorkspace.id
       }));
     } else if (view.type === 'audienceList') {
@@ -90,9 +90,9 @@ export default function Dashboard() {
         type: 'audienceList',
         workspaceId: selectedWorkspace.id
       }));
-    } else if (view.type === 'copyList') {
+    } else if (view.type === 'playbookList') {
       localStorage.setItem('currentView', JSON.stringify({
-        type: 'copyList',
+        type: 'playbookList',
         workspaceId: selectedWorkspace.id
       }));
     } else {
@@ -151,20 +151,20 @@ export default function Dashboard() {
     }
   };
 
-  const fetchCopyBlocks = async () => {
+  const fetchPlaybooks = async () => {
     if (!selectedWorkspace) return;
 
     try {
       const { data, error } = await supabase
-        .from('copy_blocks')
+        .from('playbooks')
         .select('*')
         .eq('workspace_id', selectedWorkspace.id)
-        .order('created_at', { ascending: false });
+        .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      setCopyBlocks(data || []);
+      setPlaybooks(data || []);
     } catch (error) {
-      console.error('Error fetching copy blocks:', error);
+      console.error('Error fetching playbooks:', error);
     }
   };
 
@@ -206,21 +206,21 @@ export default function Dashboard() {
     );
   }
 
-  if (view.type === 'copyList') {
+  if (view.type === 'playbookList') {
     return (
-      <CopyList
-        copyBlocks={copyBlocks}
-        onSelectCopyBlock={(copyBlock) => setView({ type: 'copyDetail', copyBlock })}
+      <PlaybookList
+        playbooks={playbooks}
+        onSelectPlaybook={(playbook) => setView({ type: 'playbookDetail', playbook })}
         onBack={() => setView({ type: 'dashboard' })}
       />
     );
   }
 
-  if (view.type === 'copyDetail') {
+  if (view.type === 'playbookDetail') {
     return (
-      <CopyDetail
-        copyBlock={view.copyBlock}
-        onBack={() => setView({ type: 'copyList' })}
+      <PlaybookDetail
+        playbook={view.playbook}
+        onBack={() => setView({ type: 'playbookList' })}
       />
     );
   }
@@ -359,10 +359,10 @@ export default function Dashboard() {
             <section>
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-md font-bold text-gray-900">Playbooks</h2>
-                {copyBlocks.length > 0 && (
+                {playbooks.length > 0 && (
                   <button
-                    onClick={() => setView({ type: 'copyList' })}
-                    className="text-xl text-primary hover:text-primary-dark font-medium flex items-center gap-1"
+                    onClick={() => setView({ type: 'playbookList' })}
+                    className="text-xs text-primary hover:text-primary-dark font-medium flex items-center gap-1"
                   >
                     View all
                     <ChevronRight className="w-4 h-4" />
@@ -370,33 +370,24 @@ export default function Dashboard() {
                 )}
               </div>
 
-              {copyBlocks.length === 0 ? (
+              {playbooks.length === 0 ? (
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
-                  <p className="text-gray-500">No copy blocks found in this workspace</p>
+                  <p className="text-gray-500">No playbooks found in this workspace</p>
                 </div>
               ) : (
                 <button
-                  onClick={() => setView({ type: 'copyDetail', copyBlock: copyBlocks[0] })}
+                  onClick={() => setView({ type: 'playbookDetail', playbook: playbooks[0] })}
                   className="w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-primary transition-all text-left"
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{copyBlocks[0].name}</h3>
-                    <div className="flex gap-2">
-                      {copyBlocks[0].type && (
-                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                          {copyBlocks[0].type}
-                        </span>
-                      )}
-                      {copyBlocks[0].status && (
-                        <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                          {copyBlocks[0].status}
-                        </span>
-                      )}
-                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">{playbooks[0].name}</h3>
                   </div>
-                  {copyBlocks[0].notes && (
-                    <p className="text-sm text-gray-600 line-clamp-2">{copyBlocks[0].notes}</p>
+                  {playbooks[0].description && (
+                    <p className="text-sm text-gray-600 line-clamp-2">{playbooks[0].description}</p>
                   )}
+                  <p className="text-xs text-gray-500 mt-2">
+                    Updated {new Date(playbooks[0].updated_at).toLocaleDateString()}
+                  </p>
                 </button>
               )}
             </section>
