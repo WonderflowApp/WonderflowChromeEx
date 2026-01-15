@@ -192,8 +192,8 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
                 {section.variants.length > 0 && (
                   <>
                     <div className="mb-3">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Select Variant:
+                      <label className="block text-xs font-medium text-gray-500 mb-1">
+                        Select variant
                       </label>
                       <div className="relative">
                         <select
