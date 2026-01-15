@@ -76,13 +76,6 @@ export default function AITargetingReport({ data }: AITargetingReportProps) {
               <p className="text-2xl font-bold text-primary">–</p>
               <p className="text-2xl font-bold text-gray-900">{formatNumber(data.estimated_reach.max)}</p>
           </div>
-          {data.estimated_reach.confidence && (
-            <div className="mt-3">
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getConfidenceColor(data.estimated_reach.confidence)}`}>
-                {data.estimated_reach.confidence.charAt(0).toUpperCase() + data.estimated_reach.confidence.slice(1)} Confidence
-              </span>
-            </div>
-          )}
         </div>
       )}
 
