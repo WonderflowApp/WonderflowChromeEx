@@ -235,7 +235,7 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
                             {section.variants.find(v => v.id === selectedVariants[section.id])?.content}
                           </p>
                         </div>
-                        <div className="flex justify-end mt-3">
+                        <div className="flex justify-end mt-2">
                           <button
                             onClick={() => handleCopySection(section.id)}
                             className={`flex items-center gap-2 font-medium text-sm transition-all ${
