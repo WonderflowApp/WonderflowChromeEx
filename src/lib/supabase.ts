@@ -15,7 +15,8 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       getItem: (key) => {
         return new Promise((resolve) => {
           chrome.storage.local.get([key], (result) => {
-            resolve(result[key] || null);
+            const value = result[key];
+            resolve(typeof value === 'string' ? value : null);
           });
         });
       },

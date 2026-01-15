@@ -56,13 +56,6 @@ export default function AITargetingReport({ data }: AITargetingReportProps) {
     return 'bg-blue-100 text-blue-700 border-blue-200';
   };
 
-  const getConfidenceColor = (confidence: string): string => {
-    const normalized = confidence.toLowerCase();
-    if (normalized === 'high') return 'bg-green-100 text-green-700 border-green-200';
-    if (normalized === 'medium') return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-    return 'bg-orange-100 text-orange-700 border-orange-200';
-  };
-
   return (
     <div className="space-y-6">
       {data.estimated_reach && (

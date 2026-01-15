@@ -32,7 +32,6 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
   const [painPoints, setPainPoints] = useState<PainPoint[]>([]);
   const [pillars, setPillars] = useState<PillarWithBlocks[]>([]);
   const [targetingLayers, setTargetingLayers] = useState<TargetingLayer[]>([]);
-  const [loading, setLoading] = useState(true);
   const [expandedPillars, setExpandedPillars] = useState<Set<string>>(new Set());
   const [expandedTargeting, setExpandedTargeting] = useState<Set<string>>(new Set());
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -42,7 +41,6 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
   }, [audience.id]);
 
   const fetchAudienceDetails = async () => {
-    setLoading(true);
     try {
       const [painPointsRes, pillarsRes, blocksRes, targetingRes] = await Promise.all([
         supabase
@@ -75,15 +73,15 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
       setPainPoints(painPointsRes.data || []);
       setTargetingLayers(targetingRes.data || []);
 
-      const pillarsWithBlocks = (pillarsRes.data || []).map((pillar) => ({
+      const pillarsData: ContentPillar[] = pillarsRes.data || [];
+      const blocksData: ContentBlock[] = blocksRes.data || [];
+      const pillarsWithBlocks: PillarWithBlocks[] = pillarsData.map((pillar) => ({
         ...pillar,
-        blocks: (blocksRes.data || []).filter((block) => block.content_pillar_id === pillar.id),
+        blocks: blocksData.filter((block) => block.content_pillar_id === pillar.id),
       }));
       setPillars(pillarsWithBlocks);
     } catch (error) {
       console.error('Error fetching audience details:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -183,7 +181,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
           </div>
             <div>
              <div className="flex flex-wrap gap-2">
-              {audience.platforms.map((platform, index) => (
+              {audience.platforms?.map((platform, index) => (
                 <span
                   key={index}
                   className="px-3 py-1.5 bg-primary text-white rounded-full text-sm font-medium"
