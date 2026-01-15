@@ -66,7 +66,7 @@ export default function AITargetingReport({ data }: AITargetingReportProps) {
   return (
     <div className="space-y-6">
       {data.estimated_reach && (
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+        <div className="bg-primary/10 rounded-lg p-6">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-5 h-5 text-primary" />
             <h3 className="text-base font-semibold text-gray-900">Estimated Reach</h3>
