@@ -24,7 +24,6 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [copiedSections, setCopiedSections] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
-  const [copiedAll, setCopiedAll] = useState(false);
 
   useEffect(() => {
     fetchPages();
@@ -123,28 +122,6 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
     }
   };
 
-  const handleCopyAll = async () => {
-    const allContent: string[] = [];
-
-    sections.forEach(section => {
-      const variantId = selectedVariants[section.id];
-      const variant = section.variants.find(v => v.id === variantId);
-      if (variant && variant.content) {
-        allContent.push(`${section.name}:\n${variant.content}`);
-      }
-    });
-
-    if (allContent.length === 0) return;
-
-    try {
-      await navigator.clipboard.writeText(allContent.join('\n\n'));
-      setCopiedAll(true);
-      setTimeout(() => setCopiedAll(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy text:', err);
-    }
-  };
-
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
@@ -169,28 +146,6 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
               <p className="text-sm text-gray-500">{playbook.description}</p>
             )}
           </div>
-          {sections.length > 0 && (
-            <button
-              onClick={handleCopyAll}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                copiedAll
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-primary text-white hover:bg-primary-dark'
-              }`}
-            >
-              {copiedAll ? (
-                <>
-                  <Check className="w-4 h-4" />
-                  Copied All!
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4" />
-                  Copy All
-                </>
-              )}
-            </button>
-          )}
         </div>
 
         {pages.length > 0 && (
@@ -228,43 +183,21 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
                 key={section.id}
                 className="bg-white rounded-lg shadow-sm border border-gray-200 p-5"
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {section.name}
-                    </h3>
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                        {section.type}
-                      </span>
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                        {section.tone}
-                      </span>
-                      <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
-                        {section.length}
-                      </span>
-                    </div>
+                <div className="mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {section.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                      {section.type}
+                    </span>
+                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                      {section.tone}
+                    </span>
+                    <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
+                      {section.length}
+                    </span>
                   </div>
-                  <button
-                    onClick={() => handleCopySection(section.id)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all ${
-                      copiedSections[section.id]
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-primary text-white hover:bg-primary-dark'
-                    }`}
-                  >
-                    {copiedSections[section.id] ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Copied
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        Copy
-                      </>
-                    )}
-                  </button>
                 </div>
 
                 {section.variants.length > 0 && (
@@ -296,11 +229,35 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
                     </div>
 
                     {selectedVariants[section.id] && (
-                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <p className="text-gray-900 leading-relaxed whitespace-pre-wrap">
-                          {section.variants.find(v => v.id === selectedVariants[section.id])?.content}
-                        </p>
-                      </div>
+                      <>
+                        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                          <p className="text-gray-900 leading-relaxed whitespace-pre-wrap">
+                            {section.variants.find(v => v.id === selectedVariants[section.id])?.content}
+                          </p>
+                        </div>
+                        <div className="flex justify-end mt-3">
+                          <button
+                            onClick={() => handleCopySection(section.id)}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all ${
+                              copiedSections[section.id]
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-primary text-white hover:bg-primary-dark'
+                            }`}
+                          >
+                            {copiedSections[section.id] ? (
+                              <>
+                                <Check className="w-4 h-4" />
+                                Copied
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-4 h-4" />
+                                Copy
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </>
                     )}
                   </>
                 )}
