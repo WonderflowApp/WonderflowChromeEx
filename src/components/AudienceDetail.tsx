@@ -161,7 +161,7 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
             Audience Details
           </h2>
           <div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 mb-4">
             {audience.goal && (
               <div>
                 <span className="text-xs font-medium text-gray-600">Goal</span>
@@ -182,7 +182,6 @@ export default function AudienceDetail({ audience, onBack }: AudienceDetailProps
             )}
           </div>
             <div>
-            <span className="text-xs font-medium text-gray-600 mt-3">Platforms</span>
              <div className="flex flex-wrap gap-2">
               {audience.platforms.map((platform, index) => (
                 <span
