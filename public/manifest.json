@@ -1,11 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Wonderflow",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Access your Wonderflow marketing audiences and copy.",
   "permissions": [
-    "storage",
-    "identity"
+    "storage"
   ],
   "host_permissions": [
     "https://kreufabhriiwgbvoovlz.supabase.co/*"
