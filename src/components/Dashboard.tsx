@@ -18,14 +18,36 @@ type View =
   | { type: 'playbookList' }
   | { type: 'playbookDetail'; playbook: Playbook };
 
+const getInitialView = (): View => {
+  try {
+    const savedView = localStorage.getItem('currentView');
+    if (savedView) {
+      const parsedView = JSON.parse(savedView);
+      if (parsedView.type === 'audienceList' || parsedView.type === 'playbookList') {
+        return { type: parsedView.type };
+      }
+      if (parsedView.type === 'audienceDetail' && parsedView.audienceId) {
+        return { type: 'dashboard' };
+      }
+      if (parsedView.type === 'playbookDetail' && parsedView.playbookId) {
+        return { type: 'dashboard' };
+      }
+    }
+  } catch (error) {
+    console.error('Error loading initial view:', error);
+  }
+  return { type: 'dashboard' };
+};
+
 export default function Dashboard() {
-  const [view, setView] = useState<View>({ type: 'dashboard' });
+  const [view, setView] = useState<View>(getInitialView());
   const [workspaces, setWorkspaces] = useState<(Workspace & { role: string })[]>([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState<(Workspace & { role: string }) | null>(null);
   const [audiences, setAudiences] = useState<Audience[]>([]);
   const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
   const [loading, setLoading] = useState(true);
   const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false);
+  const [viewRestored, setViewRestored] = useState(false);
 
   useEffect(() => {
     fetchWorkspaces();
@@ -40,12 +62,15 @@ export default function Dashboard() {
   }, [selectedWorkspace]);
 
   useEffect(() => {
+    if (viewRestored || !selectedWorkspace) return;
+
     const savedView = localStorage.getItem('currentView');
-    if (savedView && selectedWorkspace && audiences.length > 0 && playbooks.length > 0) {
+    if (savedView && audiences.length > 0 && playbooks.length > 0) {
       try {
         const parsedView = JSON.parse(savedView);
 
         if (parsedView.workspaceId !== selectedWorkspace.id) {
+          setViewRestored(true);
           return;
         }
 
@@ -59,16 +84,16 @@ export default function Dashboard() {
           if (playbook) {
             setView({ type: 'playbookDetail', playbook });
           }
-        } else if (parsedView.type === 'audienceList') {
-          setView({ type: 'audienceList' });
-        } else if (parsedView.type === 'playbookList') {
-          setView({ type: 'playbookList' });
         }
+        setViewRestored(true);
       } catch (error) {
         console.error('Error restoring view:', error);
+        setViewRestored(true);
       }
+    } else if (selectedWorkspace) {
+      setViewRestored(true);
     }
-  }, [audiences, playbooks, selectedWorkspace]);
+  }, [audiences, playbooks, selectedWorkspace, viewRestored]);
 
   useEffect(() => {
     if (!selectedWorkspace) return;
@@ -176,6 +201,7 @@ export default function Dashboard() {
     setSelectedWorkspace(workspace);
     setWorkspaceDropdownOpen(false);
     setView({ type: 'dashboard' });
+    setViewRestored(false);
     localStorage.removeItem('currentView');
   };
 
