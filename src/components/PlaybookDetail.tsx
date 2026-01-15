@@ -238,10 +238,10 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
                         <div className="flex justify-end mt-3">
                           <button
                             onClick={() => handleCopySection(section.id)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all ${
+                            className={`flex items-center gap-2 font-medium text-sm transition-all ${
                               copiedSections[section.id]
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-primary text-white hover:bg-primary-dark'
+                                ? 'text-green-700'
+                                : 'text-primary hover:text-primary-dark'
                             }`}
                           >
                             {copiedSections[section.id] ? (
