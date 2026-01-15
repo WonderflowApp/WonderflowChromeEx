@@ -154,7 +154,7 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
               <button
                 key={page.id}
                 onClick={() => setCurrentPage(page)}
-                className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
+                className={`px-2 py-1 rounded-full font-medium text-xs whitespace-nowrap transition-all ${
                   currentPage?.id === page.id
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
