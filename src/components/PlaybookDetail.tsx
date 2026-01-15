@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Copy, Check, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Copy, Check, ChevronDown, Loader2 } from 'lucide-react';
 import type { Database } from '../lib/database.types';
 import { supabase } from '../lib/supabase';
 
@@ -124,8 +124,8 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
       </div>
     );
   }
