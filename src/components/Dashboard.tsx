@@ -352,11 +352,11 @@ export default function Dashboard() {
           </div>
 
           <div className="relative bg-primary/5 border border-primary px-4 py-2 rounded-2xl my-2">
-            <p className="text-sm font-semibold text-primary-dark">
-              Reference Audiences & Copy As You Work
+            <p className="text-sm font-semibold text-primary">
+              Access your marketing plan
             </p>
             <p className="text-xs text-primary-dark">
-              Open this panel while creating ads, emails, or landing pages. Pull audience insights and approved messaging without switching tools.
+              Pull audience insights, tracking links, creative, and approved messaging without switching tools.
             </p>
           </div>
         </div>
