@@ -5,92 +5,57 @@ import {
   ArrowLeft,
   Search,
   Download,
-  FolderOpen,
   Image,
   FileVideo,
   File,
   Grid,
   List,
   X,
-  ChevronRight,
   Check
 } from 'lucide-react';
 
-type CreativeAsset = Database['public']['Tables']['creative_assets']['Row'];
-type CreativeFolder = Database['public']['Tables']['creative_folders']['Row'];
+type StorageAsset = Database['public']['Tables']['storage_assets']['Row'];
 
 interface CreativeGalleryProps {
   workspaceId: string;
   onBack: () => void;
 }
 
-function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 B';
+function formatFileSize(bytes: number | null): string {
+  if (!bytes || bytes === 0) return '0 B';
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
-function getFileIcon(fileType: string) {
-  if (fileType.startsWith('image/')) return Image;
-  if (fileType.startsWith('video/')) return FileVideo;
+function getFileIcon(mimeType: string) {
+  if (mimeType.startsWith('image/')) return Image;
+  if (mimeType.startsWith('video/')) return FileVideo;
   return File;
 }
 
 export default function CreativeGallery({ workspaceId, onBack }: CreativeGalleryProps) {
-  const [assets, setAssets] = useState<CreativeAsset[]>([]);
-  const [folders, setFolders] = useState<CreativeFolder[]>([]);
+  const [assets, setAssets] = useState<StorageAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedAsset, setSelectedAsset] = useState<CreativeAsset | null>(null);
+  const [selectedAsset, setSelectedAsset] = useState<StorageAsset | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
   const [downloadedId, setDownloadedId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchFolders();
     fetchAssets();
-  }, [workspaceId, currentFolderId]);
-
-  const fetchFolders = async () => {
-    try {
-      const query = supabase
-        .from('creative_folders')
-        .select('*')
-        .eq('workspace_id', workspaceId)
-        .order('name');
-
-      if (currentFolderId) {
-        query.eq('parent_folder_id', currentFolderId);
-      } else {
-        query.is('parent_folder_id', null);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      setFolders(data || []);
-    } catch (error) {
-      console.error('Error fetching folders:', error);
-    }
-  };
+  }, [workspaceId]);
 
   const fetchAssets = async () => {
     try {
-      const query = supabase
-        .from('creative_assets')
+      const { data, error } = await supabase
+        .from('storage_assets')
         .select('*')
         .eq('workspace_id', workspaceId)
         .order('created_at', { ascending: false });
 
-      if (currentFolderId) {
-        query.eq('folder_id', currentFolderId);
-      } else {
-        query.is('folder_id', null);
-      }
-
-      const { data, error } = await query;
       if (error) throw error;
       setAssets(data || []);
     } catch (error) {
@@ -100,19 +65,19 @@ export default function CreativeGallery({ workspaceId, onBack }: CreativeGallery
     }
   };
 
-  const downloadAsset = async (asset: CreativeAsset) => {
+  const downloadAsset = async (asset: StorageAsset) => {
     setDownloading(asset.id);
     try {
       const { data, error } = await supabase.storage
-        .from('creative-assets')
-        .download(asset.storage_path);
+        .from('creative-storage')
+        .download(asset.file_path);
 
       if (error) throw error;
 
       const url = URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = url;
-      link.download = asset.file_name;
+      link.download = asset.name;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -127,40 +92,24 @@ export default function CreativeGallery({ workspaceId, onBack }: CreativeGallery
     }
   };
 
-  const getAssetUrl = (asset: CreativeAsset) => {
-    const { data } = supabase.storage
-      .from('creative-assets')
-      .getPublicUrl(asset.storage_path);
-    return data.publicUrl;
+  const getAssetUrl = (asset: StorageAsset) => {
+    return asset.file_url;
   };
 
-  const getThumbnailUrl = (asset: CreativeAsset) => {
-    if (asset.thumbnail_path) {
-      const { data } = supabase.storage
-        .from('creative-assets')
-        .getPublicUrl(asset.thumbnail_path);
-      return data.publicUrl;
+  const getThumbnailUrl = (asset: StorageAsset) => {
+    if (asset.thumbnail_url) {
+      return asset.thumbnail_url;
     }
-    if (asset.file_type.startsWith('image/')) {
-      return getAssetUrl(asset);
+    if (asset.mime_type.startsWith('image/')) {
+      return asset.file_url;
     }
     return null;
   };
 
-  const folderPath = currentFolderId
-    ? folders.find(f => f.id === currentFolderId)?.name || 'Folder'
-    : null;
-
   const filteredAssets = assets.filter(asset =>
     searchQuery === '' ||
     asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    asset.file_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    asset.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-
-  const filteredFolders = folders.filter(folder =>
-    searchQuery === '' ||
-    folder.name.toLowerCase().includes(searchQuery.toLowerCase())
+    asset.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -169,22 +118,14 @@ export default function CreativeGallery({ workspaceId, onBack }: CreativeGallery
         <div className="px-4 py-3">
           <div className="flex items-center gap-3 mb-3">
             <button
-              onClick={() => currentFolderId ? setCurrentFolderId(null) : onBack()}
+              onClick={onBack}
               className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <Image className="w-5 h-5 text-primary flex-shrink-0" />
-              <div className="flex items-center gap-1 min-w-0">
-                <h1 className="text-lg font-bold text-gray-900 truncate">Creative</h1>
-                {folderPath && (
-                  <>
-                    <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="text-lg font-bold text-gray-900 truncate">{folderPath}</span>
-                  </>
-                )}
-              </div>
+              <h1 className="text-lg font-bold text-gray-900 truncate">Creative</h1>
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
               <button
@@ -224,7 +165,7 @@ export default function CreativeGallery({ workspaceId, onBack }: CreativeGallery
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-        ) : filteredFolders.length === 0 && filteredAssets.length === 0 ? (
+        ) : filteredAssets.length === 0 ? (
           <div className="text-center py-12">
             <Image className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500">
@@ -232,140 +173,115 @@ export default function CreativeGallery({ workspaceId, onBack }: CreativeGallery
             </p>
           </div>
         ) : (
-          <>
-            {filteredFolders.length > 0 && (
-              <div className="mb-4">
-                <h2 className="text-sm font-semibold text-gray-700 mb-2">Folders</h2>
-                <div className="grid grid-cols-2 gap-2">
-                  {filteredFolders.map(folder => (
-                    <button
-                      key={folder.id}
-                      onClick={() => setCurrentFolderId(folder.id)}
-                      className="flex items-center gap-2 p-3 bg-white rounded-xl border border-gray-200 hover:shadow-md hover:border-primary transition-all text-left"
+          <div>
+            {viewMode === 'grid' ? (
+              <div className="grid grid-cols-2 gap-3">
+                {filteredAssets.map(asset => {
+                  const thumbnailUrl = getThumbnailUrl(asset);
+                  const FileIcon = getFileIcon(asset.mime_type);
+
+                  return (
+                    <div
+                      key={asset.id}
+                      className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
                     >
-                      <FolderOpen className="w-5 h-5 text-amber-500 flex-shrink-0" />
-                      <span className="text-sm font-medium text-gray-900 truncate">{folder.name}</span>
-                    </button>
-                  ))}
-                </div>
+                      <button
+                        onClick={() => setSelectedAsset(asset)}
+                        className="w-full aspect-square bg-gray-100 flex items-center justify-center overflow-hidden"
+                      >
+                        {thumbnailUrl ? (
+                          <img
+                            src={thumbnailUrl}
+                            alt={asset.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <FileIcon className="w-12 h-12 text-gray-400" />
+                        )}
+                      </button>
+                      <div className="p-3">
+                        <p className="text-sm font-medium text-gray-900 truncate">{asset.name}</p>
+                        <p className="text-xs text-gray-500 mt-1">{formatFileSize(asset.size)}</p>
+                        <button
+                          onClick={() => downloadAsset(asset)}
+                          disabled={downloading === asset.id}
+                          className={`mt-2 w-full flex items-center justify-center gap-2 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                            downloadedId === asset.id
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {downloading === asset.id ? (
+                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-700"></div>
+                          ) : downloadedId === asset.id ? (
+                            <>
+                              <Check className="w-3 h-3" />
+                              Downloaded
+                            </>
+                          ) : (
+                            <>
+                              <Download className="w-3 h-3" />
+                              Download
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredAssets.map(asset => {
+                  const thumbnailUrl = getThumbnailUrl(asset);
+                  const FileIcon = getFileIcon(asset.mime_type);
+
+                  return (
+                    <div
+                      key={asset.id}
+                      className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow"
+                    >
+                      <button
+                        onClick={() => setSelectedAsset(asset)}
+                        className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0"
+                      >
+                        {thumbnailUrl ? (
+                          <img
+                            src={thumbnailUrl}
+                            alt={asset.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <FileIcon className="w-6 h-6 text-gray-400" />
+                        )}
+                      </button>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">{asset.name}</p>
+                        <p className="text-xs text-gray-500">{formatFileSize(asset.size)}</p>
+                      </div>
+                      <button
+                        onClick={() => downloadAsset(asset)}
+                        disabled={downloading === asset.id}
+                        className={`p-2 rounded-lg transition-colors flex-shrink-0 ${
+                          downloadedId === asset.id
+                            ? 'bg-green-100 text-green-600'
+                            : 'hover:bg-gray-100 text-gray-500'
+                        }`}
+                      >
+                        {downloading === asset.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                        ) : downloadedId === asset.id ? (
+                          <Check className="w-4 h-4" />
+                        ) : (
+                          <Download className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             )}
-
-            {filteredAssets.length > 0 && (
-              <div>
-                {filteredFolders.length > 0 && (
-                  <h2 className="text-sm font-semibold text-gray-700 mb-2">Files</h2>
-                )}
-                {viewMode === 'grid' ? (
-                  <div className="grid grid-cols-2 gap-3">
-                    {filteredAssets.map(asset => {
-                      const thumbnailUrl = getThumbnailUrl(asset);
-                      const FileIcon = getFileIcon(asset.file_type);
-
-                      return (
-                        <div
-                          key={asset.id}
-                          className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
-                        >
-                          <button
-                            onClick={() => setSelectedAsset(asset)}
-                            className="w-full aspect-square bg-gray-100 flex items-center justify-center overflow-hidden"
-                          >
-                            {thumbnailUrl ? (
-                              <img
-                                src={thumbnailUrl}
-                                alt={asset.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <FileIcon className="w-12 h-12 text-gray-400" />
-                            )}
-                          </button>
-                          <div className="p-3">
-                            <p className="text-sm font-medium text-gray-900 truncate">{asset.name}</p>
-                            <p className="text-xs text-gray-500 mt-1">{formatFileSize(asset.file_size)}</p>
-                            <button
-                              onClick={() => downloadAsset(asset)}
-                              disabled={downloading === asset.id}
-                              className={`mt-2 w-full flex items-center justify-center gap-2 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                                downloadedId === asset.id
-                                  ? 'bg-green-100 text-green-700'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                              }`}
-                            >
-                              {downloading === asset.id ? (
-                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-700"></div>
-                              ) : downloadedId === asset.id ? (
-                                <>
-                                  <Check className="w-3 h-3" />
-                                  Downloaded
-                                </>
-                              ) : (
-                                <>
-                                  <Download className="w-3 h-3" />
-                                  Download
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {filteredAssets.map(asset => {
-                      const thumbnailUrl = getThumbnailUrl(asset);
-                      const FileIcon = getFileIcon(asset.file_type);
-
-                      return (
-                        <div
-                          key={asset.id}
-                          className="flex items-center gap-3 bg-white rounded-xl border border-gray-200 p-3 hover:shadow-md transition-shadow"
-                        >
-                          <button
-                            onClick={() => setSelectedAsset(asset)}
-                            className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0"
-                          >
-                            {thumbnailUrl ? (
-                              <img
-                                src={thumbnailUrl}
-                                alt={asset.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <FileIcon className="w-6 h-6 text-gray-400" />
-                            )}
-                          </button>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{asset.name}</p>
-                            <p className="text-xs text-gray-500">{formatFileSize(asset.file_size)}</p>
-                          </div>
-                          <button
-                            onClick={() => downloadAsset(asset)}
-                            disabled={downloading === asset.id}
-                            className={`p-2 rounded-lg transition-colors flex-shrink-0 ${
-                              downloadedId === asset.id
-                                ? 'bg-green-100 text-green-600'
-                                : 'hover:bg-gray-100 text-gray-500'
-                            }`}
-                          >
-                            {downloading === asset.id ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
-                            ) : downloadedId === asset.id ? (
-                              <Check className="w-4 h-4" />
-                            ) : (
-                              <Download className="w-4 h-4" />
-                            )}
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-          </>
+          </div>
         )}
       </main>
 
@@ -382,13 +298,13 @@ export default function CreativeGallery({ workspaceId, onBack }: CreativeGallery
               </button>
             </div>
             <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-gray-100">
-              {selectedAsset.file_type.startsWith('image/') ? (
+              {selectedAsset.mime_type.startsWith('image/') ? (
                 <img
                   src={getAssetUrl(selectedAsset)}
                   alt={selectedAsset.name}
                   className="max-w-full max-h-[60vh] object-contain"
                 />
-              ) : selectedAsset.file_type.startsWith('video/') ? (
+              ) : selectedAsset.mime_type.startsWith('video/') ? (
                 <video
                   src={getAssetUrl(selectedAsset)}
                   controls
@@ -397,15 +313,15 @@ export default function CreativeGallery({ workspaceId, onBack }: CreativeGallery
               ) : (
                 <div className="text-center py-12">
                   <File className="w-16 h-16 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500">{selectedAsset.file_name}</p>
+                  <p className="text-gray-500">{selectedAsset.name}</p>
                 </div>
               )}
             </div>
             <div className="p-4 border-t border-gray-200">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <p className="text-sm text-gray-600">{selectedAsset.file_name}</p>
-                  <p className="text-xs text-gray-500">{formatFileSize(selectedAsset.file_size)}</p>
+                  <p className="text-sm text-gray-600">{selectedAsset.name}</p>
+                  <p className="text-xs text-gray-500">{formatFileSize(selectedAsset.size)}</p>
                 </div>
               </div>
               {selectedAsset.description && (

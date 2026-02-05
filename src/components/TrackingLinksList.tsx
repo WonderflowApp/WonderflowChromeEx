@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
-import { ArrowLeft, Search, Copy, Check, Link2, ExternalLink, Tag } from 'lucide-react';
+import { ArrowLeft, Search, Copy, Check, Link2, ExternalLink } from 'lucide-react';
 
-type TrackingLink = Database['public']['Tables']['tracking_links']['Row'];
+type UtmLink = Database['public']['Tables']['utm_links']['Row'];
 
 interface TrackingLinksListProps {
   workspaceId: string;
@@ -11,7 +11,7 @@ interface TrackingLinksListProps {
 }
 
 export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinksListProps) {
-  const [links, setLinks] = useState<TrackingLink[]>([]);
+  const [links, setLinks] = useState<UtmLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -24,10 +24,9 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
   const fetchLinks = async () => {
     try {
       const { data, error } = await supabase
-        .from('tracking_links')
+        .from('utm_links')
         .select('*')
         .eq('workspace_id', workspaceId)
-        .eq('is_active', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -39,9 +38,9 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
     }
   };
 
-  const copyToClipboard = async (link: TrackingLink) => {
+  const copyToClipboard = async (link: UtmLink) => {
     try {
-      await navigator.clipboard.writeText(link.full_url);
+      await navigator.clipboard.writeText(link.utm_url);
       setCopiedId(link.id);
       setTimeout(() => setCopiedId(null), 2000);
     } catch (error) {
@@ -49,17 +48,16 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
     }
   };
 
-  const campaigns = [...new Set(links.map(l => l.utm_campaign).filter(Boolean))];
+  const campaigns = [...new Set(links.map(l => l.campaign_name).filter(Boolean))];
 
   const filteredLinks = links.filter(link => {
     const matchesSearch = searchQuery === '' ||
       link.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.utm_campaign?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.utm_source?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.base_url.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      link.campaign_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      link.source.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      link.original_url.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCampaign = filterCampaign === '' || link.utm_campaign === filterCampaign;
+    const matchesCampaign = filterCampaign === '' || link.campaign_name === filterCampaign;
 
     return matchesSearch && matchesCampaign;
   });
@@ -144,11 +142,11 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 truncate">{link.name}</h3>
-                    <p className="text-xs text-gray-500 truncate mt-1">{link.base_url}</p>
+                    <p className="text-xs text-gray-500 truncate mt-1">{link.original_url}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <a
-                      href={link.full_url}
+                      href={link.utm_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -175,36 +173,19 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {link.utm_campaign && (
-                    <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
-                      {link.utm_campaign}
-                    </span>
-                  )}
-                  {link.utm_source && (
-                    <span className="text-xs px-2 py-1 bg-green-50 text-green-700 rounded-full">
-                      {link.utm_source}
-                    </span>
-                  )}
-                  {link.utm_medium && (
-                    <span className="text-xs px-2 py-1 bg-amber-50 text-amber-700 rounded-full">
-                      {link.utm_medium}
-                    </span>
-                  )}
+                  <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                    {link.campaign_name}
+                  </span>
+                  <span className="text-xs px-2 py-1 bg-green-50 text-green-700 rounded-full">
+                    {link.source}
+                  </span>
+                  <span className="text-xs px-2 py-1 bg-amber-50 text-amber-700 rounded-full">
+                    {link.medium}
+                  </span>
                 </div>
 
-                {link.tags && link.tags.length > 0 && (
-                  <div className="mt-2 flex items-center gap-1 flex-wrap">
-                    <Tag className="w-3 h-3 text-gray-400" />
-                    {link.tags.map((tag, idx) => (
-                      <span key={idx} className="text-xs text-gray-500">
-                        {tag}{idx < link.tags!.length - 1 ? ',' : ''}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
                 <div className="mt-3 pt-2 border-t border-gray-100">
-                  <p className="text-xs text-gray-400 font-mono truncate">{link.full_url}</p>
+                  <p className="text-xs text-gray-400 font-mono truncate">{link.utm_url}</p>
                 </div>
               </div>
             ))}

@@ -722,6 +722,171 @@ export interface Database {
           updated_at?: string
         }
       }
+      utm_links: {
+        Row: {
+          id: string
+          user_id: string
+          flow_id: string | null
+          name: string
+          original_url: string
+          utm_url: string
+          shortened_url: string | null
+          campaign_name: string
+          source: string
+          medium: string
+          created_at: string | null
+          updated_at: string | null
+          folder_id: string | null
+          workspace_id: string | null
+          short_link_id: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          flow_id?: string | null
+          name: string
+          original_url: string
+          utm_url: string
+          shortened_url?: string | null
+          campaign_name: string
+          source: string
+          medium: string
+          created_at?: string | null
+          updated_at?: string | null
+          folder_id?: string | null
+          workspace_id?: string | null
+          short_link_id?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          flow_id?: string | null
+          name?: string
+          original_url?: string
+          utm_url?: string
+          shortened_url?: string | null
+          campaign_name?: string
+          source?: string
+          medium?: string
+          created_at?: string | null
+          updated_at?: string | null
+          folder_id?: string | null
+          workspace_id?: string | null
+          short_link_id?: string | null
+        }
+      }
+      utm_folders: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          color: string | null
+          created_at: string
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          color?: string | null
+          created_at?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          color?: string | null
+          created_at?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+      }
+      storage_assets: {
+        Row: {
+          id: string
+          name: string
+          file_url: string
+          file_path: string
+          mime_type: string
+          size: number | null
+          width: number | null
+          height: number | null
+          duration: number | null
+          board_id: string | null
+          sub_board_id: string | null
+          workspace_id: string
+          created_by: string
+          created_at: string
+          updated_at: string
+          pipeline_status: string
+          approved_at: string | null
+          archived_at: string | null
+          is_favorite: boolean
+          thumbnail_url: string | null
+          thumbnail_path: string | null
+          parent_asset_id: string | null
+          generation_prompt: string | null
+          is_ai_generated: boolean | null
+          description: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          file_url: string
+          file_path: string
+          mime_type: string
+          size?: number | null
+          width?: number | null
+          height?: number | null
+          duration?: number | null
+          board_id?: string | null
+          sub_board_id?: string | null
+          workspace_id: string
+          created_by: string
+          created_at?: string
+          updated_at?: string
+          pipeline_status?: string
+          approved_at?: string | null
+          archived_at?: string | null
+          is_favorite?: boolean
+          thumbnail_url?: string | null
+          thumbnail_path?: string | null
+          parent_asset_id?: string | null
+          generation_prompt?: string | null
+          is_ai_generated?: boolean | null
+          description?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          file_url?: string
+          file_path?: string
+          mime_type?: string
+          size?: number | null
+          width?: number | null
+          height?: number | null
+          duration?: number | null
+          board_id?: string | null
+          sub_board_id?: string | null
+          workspace_id?: string
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+          pipeline_status?: string
+          approved_at?: string | null
+          archived_at?: string | null
+          is_favorite?: boolean
+          thumbnail_url?: string | null
+          thumbnail_path?: string | null
+          parent_asset_id?: string | null
+          generation_prompt?: string | null
+          is_ai_generated?: boolean | null
+          description?: string | null
+        }
+      }
     }
   }
 }
