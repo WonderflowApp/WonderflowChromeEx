@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ArrowLeft } from 'lucide-react';
+import { Search, ArrowLeft, UserRoundSearch } from 'lucide-react';
 import type { Database } from '../lib/database.types';
 
 type Audience = Database['public']['Tables']['audiences']['Row'];
@@ -34,6 +34,7 @@ export default function AudienceList({ audiences, onSelectAudience, onBack }: Au
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
            <div className="flex items-center gap-2">
+             <UserRoundSearch className="w-5 h-5 text-primary" />
           <h1 className="text-lg font-bold text-gray-900">All Audiences</h1>
            </div>
         </div>
