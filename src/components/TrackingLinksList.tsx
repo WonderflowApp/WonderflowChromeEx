@@ -6,21 +6,13 @@ import { ArrowLeft, Search, Copy, Check, Link2, ExternalLink, Zap, Folder } from
 type UtmLink = Database['public']['Tables']['utm_links']['Row'];
 type UtmFolder = Database['public']['Tables']['utm_folders']['Row'];
 
-interface UtmLinkWithShortLink extends UtmLink {
-  short_link?: {
-    short_code: string;
-    custom_alias: string | null;
-    is_active: boolean | null;
-  } | null;
-}
-
 interface TrackingLinksListProps {
   workspaceId: string;
   onBack: () => void;
 }
 
 export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinksListProps) {
-  const [links, setLinks] = useState<UtmLinkWithShortLink[]>([]);
+  const [links, setLinks] = useState<UtmLink[]>([]);
   const [folders, setFolders] = useState<UtmFolder[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,34 +26,14 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
 
   const fetchLinks = async () => {
     try {
-      const { data: utmLinksData, error: utmError } = await supabase
+      const { data, error } = await supabase
         .from('utm_links')
         .select('*')
         .eq('workspace_id', workspaceId)
         .order('created_at', { ascending: false });
 
-      if (utmError) throw utmError;
-
-      const { data: shortLinksData, error: shortError } = await supabase
-        .from('short_links')
-        .select('id, short_code, custom_alias, is_active, utm_link_id')
-        .eq('workspace_id', workspaceId);
-
-      if (shortError) throw shortError;
-
-      const shortLinksMap = new Map(
-        (shortLinksData || []).map(sl => [
-          sl.utm_link_id,
-          { short_code: sl.short_code, custom_alias: sl.custom_alias, is_active: sl.is_active }
-        ])
-      );
-
-      const linksWithShortLinks = (utmLinksData || []).map(link => ({
-        ...link,
-        short_link: shortLinksMap.get(link.id) || null
-      }));
-
-      setLinks(linksWithShortLinks);
+      if (error) throw error;
+      setLinks(data || []);
     } catch (error) {
       console.error('Error fetching tracking links:', error);
     } finally {
@@ -84,19 +56,11 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
     }
   };
 
-  const buildShortUrl = (shortLink: { short_code: string; custom_alias: string | null }): string => {
-    const code = shortLink.custom_alias || shortLink.short_code;
-    return `https://kreufabhriiwgbvoovlz.supabase.co/short/${code}`;
+  const getLinkToCopy = (link: UtmLink): string => {
+    return link.shortened_url || link.utm_url;
   };
 
-  const getLinkToCopy = (link: UtmLinkWithShortLink): string => {
-    if (link.short_link && link.short_link.is_active !== false) {
-      return buildShortUrl(link.short_link);
-    }
-    return link.utm_url;
-  };
-
-  const copyToClipboard = async (link: UtmLinkWithShortLink) => {
+  const copyToClipboard = async (link: UtmLink) => {
     try {
       const urlToCopy = getLinkToCopy(link);
       await navigator.clipboard.writeText(urlToCopy);
@@ -193,8 +157,8 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
         ) : (
           <div className="space-y-3">
             {filteredLinks.map(link => {
-              const hasShortLink = link.short_link && link.short_link.is_active !== false;
-              const displayUrl = hasShortLink ? buildShortUrl(link.short_link!) : link.utm_url;
+              const hasShortLink = !!link.shortened_url;
+              const displayUrl = link.shortened_url || link.utm_url;
 
               return (
                 <div
