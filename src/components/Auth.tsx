@@ -32,14 +32,21 @@ export default function Auth() {
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          skipBrowserRedirect: true,
+          redirectTo: window.location.origin,
         },
       });
 
       if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+        setTimeout(() => {
+          setGoogleLoading(false);
+        }, 3000);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign in with Google');
       setGoogleLoading(false);
