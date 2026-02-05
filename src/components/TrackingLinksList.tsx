@@ -133,7 +133,7 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
           </div>
 
           {campaigns.length > 0 && (
-            <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
+            <div className="mt-2 flex gap-2 overflow-x-auto pb-3">
               <button
                 onClick={() => setFilterCampaign('')}
                 className={`px-3 py-1 text-xs rounded-full whitespace-nowrap transition-colors ${
