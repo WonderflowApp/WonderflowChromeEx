@@ -170,7 +170,7 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-gray-900 truncate">{link.name}</h3>
                         {hasShortLink && (
-                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">
                             <Zap className="w-3 h-3" />
                             Track
                           </span>
