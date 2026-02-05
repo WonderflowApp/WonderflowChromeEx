@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ArrowLeft } from 'lucide-react';
+import { Search, ArrowLeft, NotebookText } from 'lucide-react';
 import type { Database } from '../lib/database.types';
 
 type Playbook = Database['public']['Tables']['playbooks']['Row'];
@@ -31,7 +31,8 @@ export default function PlaybookList({ playbooks, onSelectPlaybook, onBack }: Pl
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
-          <h1 className="text-xl font-bold text-gray-900">All Playbooks</h1>
+           <NotebookText className="w-5 h-5 text-primary" />
+          <h1 className="text-lg font-bold text-gray-900">All Playbooks</h1>
         </div>
 
         <div className="relative">
