@@ -58,7 +58,7 @@ export default function Auth() {
             Wonderflow
           </h1>
           <p className="text-center text-gray-600 mb-3">
-            Sign in to access your Audiences and Copy
+            Sign in to access your marketing assets.
           </p>
 
           <form onSubmit={handleSignIn} className="space-y-5">
