@@ -931,6 +931,73 @@ export interface Database {
           updated_at?: string | null
         }
       }
+      boards: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          workspace_id: string
+          user_id: string
+          is_deleted: boolean
+          is_favorite: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          workspace_id: string
+          user_id: string
+          is_deleted?: boolean
+          is_favorite?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          workspace_id?: string
+          user_id?: string
+          is_deleted?: boolean
+          is_favorite?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      sub_boards: {
+        Row: {
+          id: string
+          board_id: string
+          name: string
+          description: string | null
+          position: number
+          is_deleted: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          board_id: string
+          name: string
+          description?: string | null
+          position?: number
+          is_deleted?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          board_id?: string
+          name?: string
+          description?: string | null
+          position?: number
+          is_deleted?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }

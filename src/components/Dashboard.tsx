@@ -8,10 +8,13 @@ import PlaybookList from './PlaybookList';
 import PlaybookDetail from './PlaybookDetail';
 import TrackingLinksList from './TrackingLinksList';
 import CreativeGallery from './CreativeGallery';
+import BoardsList from './BoardsList';
+import BoardDetail from './BoardDetail';
 
 type Audience = Database['public']['Tables']['audiences']['Row'];
 type Playbook = Database['public']['Tables']['playbooks']['Row'];
 type Workspace = Database['public']['Tables']['workspaces']['Row'];
+type Board = Database['public']['Tables']['boards']['Row'];
 
 type View =
   | { type: 'dashboard' }
@@ -20,7 +23,9 @@ type View =
   | { type: 'playbookList' }
   | { type: 'playbookDetail'; playbook: Playbook }
   | { type: 'trackingLinks' }
-  | { type: 'creativeGallery' };
+  | { type: 'boardsList' }
+  | { type: 'boardDetail'; board: Board }
+  | { type: 'creativeGallery'; boardId?: string; subBoardId?: string };
 
 const getInitialView = (): View => {
   try {
@@ -28,13 +33,23 @@ const getInitialView = (): View => {
     if (savedView) {
       const parsedView = JSON.parse(savedView);
       if (parsedView.type === 'audienceList' || parsedView.type === 'playbookList' ||
-          parsedView.type === 'trackingLinks' || parsedView.type === 'creativeGallery') {
+          parsedView.type === 'trackingLinks' || parsedView.type === 'boardsList') {
         return { type: parsedView.type };
+      }
+      if (parsedView.type === 'creativeGallery') {
+        return {
+          type: 'creativeGallery',
+          boardId: parsedView.boardId,
+          subBoardId: parsedView.subBoardId
+        };
       }
       if (parsedView.type === 'audienceDetail' && parsedView.audienceId) {
         return { type: 'dashboard' };
       }
       if (parsedView.type === 'playbookDetail' && parsedView.playbookId) {
+        return { type: 'dashboard' };
+      }
+      if (parsedView.type === 'boardDetail' && parsedView.boardId) {
         return { type: 'dashboard' };
       }
     }
@@ -115,6 +130,12 @@ export default function Dashboard() {
         playbookId: view.playbook.id,
         workspaceId: selectedWorkspace.id
       }));
+    } else if (view.type === 'boardDetail') {
+      localStorage.setItem('currentView', JSON.stringify({
+        type: 'boardDetail',
+        boardId: view.board.id,
+        workspaceId: selectedWorkspace.id
+      }));
     } else if (view.type === 'audienceList') {
       localStorage.setItem('currentView', JSON.stringify({
         type: 'audienceList',
@@ -130,9 +151,16 @@ export default function Dashboard() {
         type: 'trackingLinks',
         workspaceId: selectedWorkspace.id
       }));
+    } else if (view.type === 'boardsList') {
+      localStorage.setItem('currentView', JSON.stringify({
+        type: 'boardsList',
+        workspaceId: selectedWorkspace.id
+      }));
     } else if (view.type === 'creativeGallery') {
       localStorage.setItem('currentView', JSON.stringify({
         type: 'creativeGallery',
+        boardId: view.boardId,
+        subBoardId: view.subBoardId,
         workspaceId: selectedWorkspace.id
       }));
     } else {
@@ -275,11 +303,41 @@ export default function Dashboard() {
     );
   }
 
+  if (view.type === 'boardsList' && selectedWorkspace) {
+    return (
+      <BoardsList
+        workspaceId={selectedWorkspace.id}
+        onBack={() => setView({ type: 'dashboard' })}
+        onSelectBoard={(board) => setView({ type: 'boardDetail', board })}
+        onViewAllAssets={() => setView({ type: 'creativeGallery' })}
+      />
+    );
+  }
+
+  if (view.type === 'boardDetail' && selectedWorkspace) {
+    return (
+      <BoardDetail
+        board={view.board}
+        onBack={() => setView({ type: 'boardsList' })}
+        onViewBoardAssets={(boardId) => setView({ type: 'creativeGallery', boardId })}
+        onViewSubBoardAssets={(boardId, subBoardId) => setView({ type: 'creativeGallery', boardId, subBoardId })}
+      />
+    );
+  }
+
   if (view.type === 'creativeGallery' && selectedWorkspace) {
     return (
       <CreativeGallery
         workspaceId={selectedWorkspace.id}
-        onBack={() => setView({ type: 'dashboard' })}
+        boardId={view.boardId}
+        subBoardId={view.subBoardId}
+        onBack={() => {
+          if (view.subBoardId || view.boardId) {
+            setView({ type: 'boardsList' });
+          } else {
+            setView({ type: 'dashboard' });
+          }
+        }}
       />
     );
   }
@@ -466,7 +524,7 @@ export default function Dashboard() {
               </button>
 
               <button
-                onClick={() => setView({ type: 'creativeGallery' })}
+                onClick={() => setView({ type: 'boardsList' })}
                 className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary transition-all text-left"
               >
                 <div className="flex items-center gap-3 mb-2">
@@ -475,7 +533,7 @@ export default function Dashboard() {
                   </div>
                   <h3 className="font-semibold text-gray-900">Creative</h3>
                 </div>
-                <p className="text-xs text-gray-500">Browse and download assets</p>
+                <p className="text-xs text-gray-500">Browse boards and assets</p>
               </button>
             </div>
           </div>

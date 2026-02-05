@@ -11,13 +11,18 @@ import {
   Grid,
   List,
   X,
-  Check
+  Check,
+  ChevronRight
 } from 'lucide-react';
 
 type StorageAsset = Database['public']['Tables']['storage_assets']['Row'];
+type Board = Database['public']['Tables']['boards']['Row'];
+type SubBoard = Database['public']['Tables']['sub_boards']['Row'];
 
 interface CreativeGalleryProps {
   workspaceId: string;
+  boardId?: string;
+  subBoardId?: string;
   onBack: () => void;
 }
 
@@ -35,7 +40,7 @@ function getFileIcon(mimeType: string) {
   return File;
 }
 
-export default function CreativeGallery({ workspaceId, onBack }: CreativeGalleryProps) {
+export default function CreativeGallery({ workspaceId, boardId, subBoardId, onBack }: CreativeGalleryProps) {
   const [assets, setAssets] = useState<StorageAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,18 +48,66 @@ export default function CreativeGallery({ workspaceId, onBack }: CreativeGallery
   const [selectedAsset, setSelectedAsset] = useState<StorageAsset | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
   const [downloadedId, setDownloadedId] = useState<string | null>(null);
+  const [boardName, setBoardName] = useState<string | null>(null);
+  const [subBoardName, setSubBoardName] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAssets();
-  }, [workspaceId]);
+    if (boardId) {
+      fetchBoardName();
+    }
+    if (subBoardId) {
+      fetchSubBoardName();
+    }
+  }, [workspaceId, boardId, subBoardId]);
+
+  const fetchBoardName = async () => {
+    if (!boardId) return;
+    try {
+      const { data, error } = await supabase
+        .from('boards')
+        .select('name')
+        .eq('id', boardId)
+        .maybeSingle();
+
+      if (error) throw error;
+      setBoardName(data?.name || null);
+    } catch (error) {
+      console.error('Error fetching board name:', error);
+    }
+  };
+
+  const fetchSubBoardName = async () => {
+    if (!subBoardId) return;
+    try {
+      const { data, error } = await supabase
+        .from('sub_boards')
+        .select('name')
+        .eq('id', subBoardId)
+        .maybeSingle();
+
+      if (error) throw error;
+      setSubBoardName(data?.name || null);
+    } catch (error) {
+      console.error('Error fetching sub-board name:', error);
+    }
+  };
 
   const fetchAssets = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('storage_assets')
         .select('*')
         .eq('workspace_id', workspaceId)
-        .order('created_at', { ascending: false });
+        .is('archived_at', null);
+
+      if (subBoardId) {
+        query = query.eq('sub_board_id', subBoardId);
+      } else if (boardId) {
+        query = query.eq('board_id', boardId);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
       setAssets(data || []);
@@ -125,7 +178,21 @@ export default function CreativeGallery({ workspaceId, onBack }: CreativeGallery
             </button>
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <Image className="w-5 h-5 text-primary flex-shrink-0" />
-              <h1 className="text-lg font-bold text-gray-900 truncate">Creative</h1>
+              <div className="flex items-center gap-1 flex-1 min-w-0">
+                <h1 className="text-lg font-bold text-gray-900 truncate">Creative</h1>
+                {boardName && (
+                  <>
+                    <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-sm text-gray-600 truncate">{boardName}</span>
+                  </>
+                )}
+                {subBoardName && (
+                  <>
+                    <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-sm text-gray-600 truncate">{subBoardName}</span>
+                  </>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
               <button
