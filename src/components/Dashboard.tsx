@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { LogOut, ChevronDown, Home, ChevronRight, Building2, Loader2 } from 'lucide-react';
+import { LogOut, ChevronDown, Home, ChevronRight, Building2, Loader2, Link2, Image } from 'lucide-react';
 import type { Database } from '../lib/database.types';
 import AudienceList from './AudienceList';
 import AudienceDetail from './AudienceDetail';
 import PlaybookList from './PlaybookList';
 import PlaybookDetail from './PlaybookDetail';
+import TrackingLinksList from './TrackingLinksList';
+import CreativeGallery from './CreativeGallery';
 
 type Audience = Database['public']['Tables']['audiences']['Row'];
 type Playbook = Database['public']['Tables']['playbooks']['Row'];
@@ -16,14 +18,17 @@ type View =
   | { type: 'audienceList' }
   | { type: 'audienceDetail'; audience: Audience }
   | { type: 'playbookList' }
-  | { type: 'playbookDetail'; playbook: Playbook };
+  | { type: 'playbookDetail'; playbook: Playbook }
+  | { type: 'trackingLinks' }
+  | { type: 'creativeGallery' };
 
 const getInitialView = (): View => {
   try {
     const savedView = localStorage.getItem('currentView');
     if (savedView) {
       const parsedView = JSON.parse(savedView);
-      if (parsedView.type === 'audienceList' || parsedView.type === 'playbookList') {
+      if (parsedView.type === 'audienceList' || parsedView.type === 'playbookList' ||
+          parsedView.type === 'trackingLinks' || parsedView.type === 'creativeGallery') {
         return { type: parsedView.type };
       }
       if (parsedView.type === 'audienceDetail' && parsedView.audienceId) {
@@ -118,6 +123,16 @@ export default function Dashboard() {
     } else if (view.type === 'playbookList') {
       localStorage.setItem('currentView', JSON.stringify({
         type: 'playbookList',
+        workspaceId: selectedWorkspace.id
+      }));
+    } else if (view.type === 'trackingLinks') {
+      localStorage.setItem('currentView', JSON.stringify({
+        type: 'trackingLinks',
+        workspaceId: selectedWorkspace.id
+      }));
+    } else if (view.type === 'creativeGallery') {
+      localStorage.setItem('currentView', JSON.stringify({
+        type: 'creativeGallery',
         workspaceId: selectedWorkspace.id
       }));
     } else {
@@ -247,6 +262,24 @@ export default function Dashboard() {
       <PlaybookDetail
         playbook={view.playbook}
         onBack={() => setView({ type: 'playbookList' })}
+      />
+    );
+  }
+
+  if (view.type === 'trackingLinks' && selectedWorkspace) {
+    return (
+      <TrackingLinksList
+        workspaceId={selectedWorkspace.id}
+        onBack={() => setView({ type: 'dashboard' })}
+      />
+    );
+  }
+
+  if (view.type === 'creativeGallery' && selectedWorkspace) {
+    return (
+      <CreativeGallery
+        workspaceId={selectedWorkspace.id}
+        onBack={() => setView({ type: 'dashboard' })}
       />
     );
   }
@@ -417,6 +450,34 @@ export default function Dashboard() {
                 </button>
               )}
             </section>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setView({ type: 'trackingLinks' })}
+                className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary transition-all text-left"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-blue-50 rounded-lg">
+                    <Link2 className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900">Tracking Links</h3>
+                </div>
+                <p className="text-xs text-gray-500">Copy UTM links for campaigns</p>
+              </button>
+
+              <button
+                onClick={() => setView({ type: 'creativeGallery' })}
+                className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-primary transition-all text-left"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-green-50 rounded-lg">
+                    <Image className="w-5 h-5 text-green-600" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900">Creative</h3>
+                </div>
+                <p className="text-xs text-gray-500">Browse and download assets</p>
+              </button>
+            </div>
           </div>
         )}
       </main>

@@ -581,6 +581,147 @@ export interface Database {
           rich_content?: Json | null
         }
       }
+      creative_folders: {
+        Row: {
+          id: string
+          workspace_id: string
+          name: string
+          parent_folder_id: string | null
+          color: string | null
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          workspace_id: string
+          name: string
+          parent_folder_id?: string | null
+          color?: string | null
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          workspace_id?: string
+          name?: string
+          parent_folder_id?: string | null
+          color?: string | null
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      creative_assets: {
+        Row: {
+          id: string
+          workspace_id: string
+          folder_id: string | null
+          name: string
+          file_name: string
+          file_type: string
+          file_size: number
+          storage_path: string
+          thumbnail_path: string | null
+          tags: string[] | null
+          description: string | null
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          workspace_id: string
+          folder_id?: string | null
+          name: string
+          file_name: string
+          file_type: string
+          file_size?: number
+          storage_path: string
+          thumbnail_path?: string | null
+          tags?: string[] | null
+          description?: string | null
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          workspace_id?: string
+          folder_id?: string | null
+          name?: string
+          file_name?: string
+          file_type?: string
+          file_size?: number
+          storage_path?: string
+          thumbnail_path?: string | null
+          tags?: string[] | null
+          description?: string | null
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      tracking_links: {
+        Row: {
+          id: string
+          workspace_id: string
+          name: string
+          base_url: string
+          utm_source: string | null
+          utm_medium: string | null
+          utm_campaign: string | null
+          utm_term: string | null
+          utm_content: string | null
+          full_url: string
+          short_code: string | null
+          tags: string[] | null
+          click_count: number
+          is_active: boolean
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          workspace_id: string
+          name: string
+          base_url: string
+          utm_source?: string | null
+          utm_medium?: string | null
+          utm_campaign?: string | null
+          utm_term?: string | null
+          utm_content?: string | null
+          full_url: string
+          short_code?: string | null
+          tags?: string[] | null
+          click_count?: number
+          is_active?: boolean
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          workspace_id?: string
+          name?: string
+          base_url?: string
+          utm_source?: string | null
+          utm_medium?: string | null
+          utm_campaign?: string | null
+          utm_term?: string | null
+          utm_content?: string | null
+          full_url?: string
+          short_code?: string | null
+          tags?: string[] | null
+          click_count?: number
+          is_active?: boolean
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
