@@ -167,30 +167,30 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
+                      
                         <h3 className="font-semibold text-gray-900 truncate">{link.name}</h3>
+                      <div className="flex items-center gap-2">
                         {hasShortLink && (
-                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-primary text-white rounded-full">
+                          <span className="inline-flex items-center gap-1 text-xs p-1 bg-primary text-white rounded-full">
                             <Zap className="w-3 h-3" />
-                            Track
                           </span>
                         )}
-                      </div>
-                      <p className="text-xs text-gray-500 truncate mt-1">{link.original_url}</p>
+                      
+                      <p className="text-xs text-gray-500 truncate mt-1">{link.original_url}</p></div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <a
                         href={link.utm_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
                         title="Open link"
                       >
                         <ExternalLink className="w-4 h-4 text-gray-500" />
                       </a>
                       <button
                         onClick={() => copyToClipboard(link)}
-                        className={`p-2 rounded-lg transition-colors ${
+                        className={`p-1 rounded-lg transition-colors ${
                           copiedId === link.id
                             ? 'bg-green-100 text-green-600'
                             : 'hover:bg-gray-100 text-gray-500'
@@ -219,16 +219,9 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
                   </div>
 
                   <div className="mt-3 pt-2 border-t border-gray-100">
-                    <div className="flex items-center gap-2">
                       <p className="text-xs text-gray-400 font-mono truncate flex-1">
                         {displayUrl}
                       </p>
-                    </div>
-                    {hasShortLink && (
-                      <p className="text-xs text-gray-300 font-mono truncate mt-1">
-                        Full: {link.utm_url}
-                      </p>
-                    )}
                   </div>
                 </div>
               );
