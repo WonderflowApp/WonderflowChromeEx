@@ -58,7 +58,7 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
 
       const linksWithShortLinks = (utmLinksData || []).map(link => ({
         ...link,
-        short_link: link.short_link_id ? shortLinksMap.get(link.short_link_id) : null
+        short_link: shortLinksMap.get(link.id) || null
       }));
 
       setLinks(linksWithShortLinks);
