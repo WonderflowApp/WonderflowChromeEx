@@ -1,9 +1,18 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
-import { ArrowLeft, Search, Copy, Check, Link2, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Search, Copy, Check, Link2, ExternalLink, Zap } from 'lucide-react';
 
 type UtmLink = Database['public']['Tables']['utm_links']['Row'];
+type ShortLink = Database['public']['Tables']['short_links']['Row'];
+
+interface UtmLinkWithShortLink extends UtmLink {
+  short_link?: {
+    short_code: string;
+    custom_alias: string | null;
+    is_active: boolean | null;
+  } | null;
+}
 
 interface TrackingLinksListProps {
   workspaceId: string;
@@ -11,7 +20,7 @@ interface TrackingLinksListProps {
 }
 
 export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinksListProps) {
-  const [links, setLinks] = useState<UtmLink[]>([]);
+  const [links, setLinks] = useState<UtmLinkWithShortLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -23,14 +32,34 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
 
   const fetchLinks = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: utmLinksData, error: utmError } = await supabase
         .from('utm_links')
         .select('*')
         .eq('workspace_id', workspaceId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setLinks(data || []);
+      if (utmError) throw utmError;
+
+      const { data: shortLinksData, error: shortError } = await supabase
+        .from('short_links')
+        .select('id, short_code, custom_alias, is_active, utm_link_id')
+        .eq('workspace_id', workspaceId);
+
+      if (shortError) throw shortError;
+
+      const shortLinksMap = new Map(
+        (shortLinksData || []).map(sl => [
+          sl.utm_link_id,
+          { short_code: sl.short_code, custom_alias: sl.custom_alias, is_active: sl.is_active }
+        ])
+      );
+
+      const linksWithShortLinks = (utmLinksData || []).map(link => ({
+        ...link,
+        short_link: link.short_link_id ? shortLinksMap.get(link.short_link_id) : null
+      }));
+
+      setLinks(linksWithShortLinks);
     } catch (error) {
       console.error('Error fetching tracking links:', error);
     } finally {
@@ -38,9 +67,22 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
     }
   };
 
-  const copyToClipboard = async (link: UtmLink) => {
+  const buildShortUrl = (shortLink: { short_code: string; custom_alias: string | null }): string => {
+    const code = shortLink.custom_alias || shortLink.short_code;
+    return `https://kreufabhriiwgbvoovlz.supabase.co/short/${code}`;
+  };
+
+  const getLinkToCopy = (link: UtmLinkWithShortLink): string => {
+    if (link.short_link && link.short_link.is_active !== false) {
+      return buildShortUrl(link.short_link);
+    }
+    return link.utm_url;
+  };
+
+  const copyToClipboard = async (link: UtmLinkWithShortLink) => {
     try {
-      await navigator.clipboard.writeText(link.utm_url);
+      const urlToCopy = getLinkToCopy(link);
+      await navigator.clipboard.writeText(urlToCopy);
       setCopiedId(link.id);
       setTimeout(() => setCopiedId(null), 2000);
     } catch (error) {
@@ -134,61 +176,88 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
           </div>
         ) : (
           <div className="space-y-3">
-            {filteredLinks.map(link => (
-              <div
-                key={link.id}
-                className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">{link.name}</h3>
-                    <p className="text-xs text-gray-500 truncate mt-1">{link.original_url}</p>
+            {filteredLinks.map(link => {
+              const hasShortLink = link.short_link && link.short_link.is_active !== false;
+              const displayUrl = hasShortLink ? buildShortUrl(link.short_link!) : link.utm_url;
+
+              return (
+                <div
+                  key={link.id}
+                  className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-gray-900 truncate">{link.name}</h3>
+                        {hasShortLink && (
+                          <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full">
+                            <Zap className="w-3 h-3" />
+                            Short
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 truncate mt-1">{link.original_url}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={link.utm_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        title="Open link"
+                      >
+                        <ExternalLink className="w-4 h-4 text-gray-500" />
+                      </a>
+                      <button
+                        onClick={() => copyToClipboard(link)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          copiedId === link.id
+                            ? 'bg-green-100 text-green-600'
+                            : 'hover:bg-gray-100 text-gray-500'
+                        }`}
+                        title={`Copy ${hasShortLink ? 'short' : 'full'} link`}
+                      >
+                        {copiedId === link.id ? (
+                          <Check className="w-4 h-4" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={link.utm_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                      title="Open link"
-                    >
-                      <ExternalLink className="w-4 h-4 text-gray-500" />
-                    </a>
-                    <button
-                      onClick={() => copyToClipboard(link)}
-                      className={`p-2 rounded-lg transition-colors ${
-                        copiedId === link.id
-                          ? 'bg-green-100 text-green-600'
-                          : 'hover:bg-gray-100 text-gray-500'
-                      }`}
-                      title="Copy link"
-                    >
-                      {copiedId === link.id ? (
-                        <Check className="w-4 h-4" />
-                      ) : (
-                        <Copy className="w-4 h-4" />
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                      {link.campaign_name}
+                    </span>
+                    <span className="text-xs px-2 py-1 bg-green-50 text-green-700 rounded-full">
+                      {link.source}
+                    </span>
+                    <span className="text-xs px-2 py-1 bg-amber-50 text-amber-700 rounded-full">
+                      {link.medium}
+                    </span>
+                  </div>
+
+                  <div className="mt-3 pt-2 border-t border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs text-gray-400 font-mono truncate flex-1">
+                        {displayUrl}
+                      </p>
+                      {hasShortLink && (
+                        <span className="text-xs text-emerald-600 font-medium whitespace-nowrap">
+                          Will copy
+                        </span>
                       )}
-                    </button>
+                    </div>
+                    {hasShortLink && (
+                      <p className="text-xs text-gray-300 font-mono truncate mt-1">
+                        Full: {link.utm_url}
+                      </p>
+                    )}
                   </div>
                 </div>
-
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
-                    {link.campaign_name}
-                  </span>
-                  <span className="text-xs px-2 py-1 bg-green-50 text-green-700 rounded-full">
-                    {link.source}
-                  </span>
-                  <span className="text-xs px-2 py-1 bg-amber-50 text-amber-700 rounded-full">
-                    {link.medium}
-                  </span>
-                </div>
-
-                <div className="mt-3 pt-2 border-t border-gray-100">
-                  <p className="text-xs text-gray-400 font-mono truncate">{link.utm_url}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>

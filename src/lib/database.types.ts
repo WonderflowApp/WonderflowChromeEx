@@ -887,6 +887,50 @@ export interface Database {
           description?: string | null
         }
       }
+      short_links: {
+        Row: {
+          id: string
+          short_code: string
+          original_url: string
+          utm_link_id: string | null
+          workspace_id: string
+          created_by: string | null
+          custom_alias: string | null
+          is_active: boolean | null
+          expires_at: string | null
+          click_count: number | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          short_code: string
+          original_url: string
+          utm_link_id?: string | null
+          workspace_id: string
+          created_by?: string | null
+          custom_alias?: string | null
+          is_active?: boolean | null
+          expires_at?: string | null
+          click_count?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          short_code?: string
+          original_url?: string
+          utm_link_id?: string | null
+          workspace_id?: string
+          created_by?: string | null
+          custom_alias?: string | null
+          is_active?: boolean | null
+          expires_at?: string | null
+          click_count?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+      }
     }
   }
 }
