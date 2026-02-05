@@ -169,14 +169,14 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
                     <div className="flex-1 min-w-0">
                       
                         <h3 className="font-semibold text-gray-900 truncate">{link.name}</h3>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 mt-1">
                         {hasShortLink && (
-                          <span className="inline-flex items-center gap-1 text-xs p-1 bg-primary text-white rounded-full">
+                          <span className="text-xs text-primary">
                             <Zap className="w-3 h-3" />
                           </span>
                         )}
                       
-                      <p className="text-xs text-gray-500 truncate mt-1">{link.original_url}</p></div>
+                      <p className="text-xs text-gray-500 truncate">{link.original_url}</p></div>
                     </div>
                     <div className="flex items-center gap-1">
                       <a
