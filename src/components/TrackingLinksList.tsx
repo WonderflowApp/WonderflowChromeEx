@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
-import { ArrowLeft, Search, Copy, Check, Link2, ExternalLink, Zap } from 'lucide-react';
+import { ArrowLeft, Search, Copy, Check, Link2, ExternalLink, Zap, Folder } from 'lucide-react';
 
 type UtmLink = Database['public']['Tables']['utm_links']['Row'];
-type ShortLink = Database['public']['Tables']['short_links']['Row'];
+type UtmFolder = Database['public']['Tables']['utm_folders']['Row'];
 
 interface UtmLinkWithShortLink extends UtmLink {
   short_link?: {
@@ -21,13 +21,15 @@ interface TrackingLinksListProps {
 
 export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinksListProps) {
   const [links, setLinks] = useState<UtmLinkWithShortLink[]>([]);
+  const [folders, setFolders] = useState<UtmFolder[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [filterCampaign, setFilterCampaign] = useState<string>('');
+  const [filterFolder, setFilterFolder] = useState<string>('');
 
   useEffect(() => {
     fetchLinks();
+    fetchFolders();
   }, [workspaceId]);
 
   const fetchLinks = async () => {
@@ -67,6 +69,21 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
     }
   };
 
+  const fetchFolders = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('utm_folders')
+        .select('*')
+        .eq('workspace_id', workspaceId)
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setFolders(data || []);
+    } catch (error) {
+      console.error('Error fetching folders:', error);
+    }
+  };
+
   const buildShortUrl = (shortLink: { short_code: string; custom_alias: string | null }): string => {
     const code = shortLink.custom_alias || shortLink.short_code;
     return `https://kreufabhriiwgbvoovlz.supabase.co/short/${code}`;
@@ -90,8 +107,6 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
     }
   };
 
-  const campaigns = [...new Set(links.map(l => l.campaign_name).filter(Boolean))];
-
   const filteredLinks = links.filter(link => {
     const matchesSearch = searchQuery === '' ||
       link.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -99,9 +114,9 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
       link.source.toLowerCase().includes(searchQuery.toLowerCase()) ||
       link.original_url.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCampaign = filterCampaign === '' || link.campaign_name === filterCampaign;
+    const matchesFolder = filterFolder === '' || link.folder_id === filterFolder;
 
-    return matchesSearch && matchesCampaign;
+    return matchesSearch && matchesFolder;
   });
 
   return (
@@ -132,29 +147,30 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
             />
           </div>
 
-          {campaigns.length > 0 && (
+          {folders.length > 0 && (
             <div className="mt-2 flex gap-2 overflow-x-auto pb-3">
               <button
-                onClick={() => setFilterCampaign('')}
+                onClick={() => setFilterFolder('')}
                 className={`px-3 py-1 text-xs rounded-full whitespace-nowrap transition-colors ${
-                  filterCampaign === ''
+                  filterFolder === ''
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 All
               </button>
-              {campaigns.map(campaign => (
+              {folders.map(folder => (
                 <button
-                  key={campaign}
-                  onClick={() => setFilterCampaign(campaign || '')}
-                  className={`px-3 py-1 text-xs rounded-full whitespace-nowrap transition-colors ${
-                    filterCampaign === campaign
+                  key={folder.id}
+                  onClick={() => setFilterFolder(folder.id)}
+                  className={`flex items-center gap-1 px-3 py-1 text-xs rounded-full whitespace-nowrap transition-colors ${
+                    filterFolder === folder.id
                       ? 'bg-primary text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
-                  {campaign}
+                  <Folder className="w-3 h-3" />
+                  {folder.name}
                 </button>
               ))}
             </div>
@@ -171,7 +187,7 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
           <div className="text-center py-12">
             <Link2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500">
-              {searchQuery || filterCampaign ? 'No links match your search' : 'No tracking links found'}
+              {searchQuery || filterFolder ? 'No links match your filters' : 'No tracking links found'}
             </p>
           </div>
         ) : (
