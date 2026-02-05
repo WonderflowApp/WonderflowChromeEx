@@ -259,11 +259,6 @@ export default function TrackingLinksList({ workspaceId, onBack }: TrackingLinks
                       <p className="text-xs text-gray-400 font-mono truncate flex-1">
                         {displayUrl}
                       </p>
-                      {hasShortLink && (
-                        <span className="text-xs text-emerald-600 font-medium whitespace-nowrap">
-                          Will copy
-                        </span>
-                      )}
                     </div>
                     {hasShortLink && (
                       <p className="text-xs text-gray-300 font-mono truncate mt-1">
