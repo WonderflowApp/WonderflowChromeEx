@@ -149,7 +149,7 @@ export default function PlaybookDetail({ playbook, onBack }: PlaybookDetailProps
         </div>
 
         {pages.length > 0 && (
-          <div className="flex gap-2 overflow-x-auto pb-1">
+          <div className="flex gap-2 overflow-x-auto pb-3">
             {pages.map((page) => (
               <button
                 key={page.id}
